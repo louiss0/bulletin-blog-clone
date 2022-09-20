@@ -1,5 +1,4 @@
 # Astro Docker Template 
-git 
 
 This template is a template that contains two main folders the app folder and the dockerfile. 
 
@@ -10,6 +9,26 @@ Symlinks can't be transferred from one file to another and pnpm will slow things
 
 I discovered that every time you download something new you need to then kill the image and start all over again to me this is not productive.
 I created this template because I don't like to download the node installer at all. But Other that that there are quite a few topics to cover.
+
+## Using the Project 
+
+To activate the server use 
+
+```
+docker-compose up -d server
+```
+
+To create a preview of the site
+```
+docker-compose up -d preview
+```
+
+To install packages 
+
+```
+docker-compose run --rm npm i ==package name==
+```
+
 
 
 ## Sections 
