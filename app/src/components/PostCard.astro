@@ -1,0 +1,47 @@
+---
+import Post from "@/types/Post";
+
+type Props = Omit<Post, "content" | "id"> &
+  Partial<Record<"class" | "imageClass", string>>;
+
+const {
+  author,
+  authorImage,
+  tag,
+  title,
+  pubDate,
+  class: $class = "",
+  imageClass = "",
+} = Astro.props as Props;
+
+const image = new Image();
+
+image.src = authorImage;
+
+const alteredDate = new Date(pubDate).toLocaleString();
+---
+
+<div class={$class}>
+  <header>
+    <img
+      src={authorImage}
+      alt=""
+      class:list={["rounded-sm object-cover h-2/5", imageClass]}
+      width={image.naturalWidth}
+      height={image.naturalHeight}
+    />
+  </header>
+  <footer>
+    <div class="grid gap-2">
+      <div class="text-purple-700 uppercase">{tag}</div>
+      <div class="leading-5">
+        {title}
+      </div>
+    </div>
+    <div class="text-gray-400 flex gap-1">
+      <div class="uppercase">{author}</div>
+      <div>&middot;</div>
+      <time datetime={alteredDate}>{pubDate}</time>
+    </div>
+  </footer>
+</div>

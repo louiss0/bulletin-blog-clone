@@ -5,7 +5,6 @@ import vue from "@astrojs/vue";
 
 import vueJSX from  "@vitejs/plugin-vue-jsx";
 
-import HtmlDirectives from "remark-html-directives";
 
 // https://astro.build/config
 export default defineConfig({
@@ -18,11 +17,6 @@ export default defineConfig({
     plugins: [
       vueJSX({enableObjectSlots: true, })
     ],
-    resolve: {
-      alias: {
-        "@": "/src",
-      },
-    },
     ssr: {
       external: ["svgo"],
     },

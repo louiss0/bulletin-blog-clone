@@ -109,7 +109,7 @@
             "content": "<h2>Ducimus est necessitatibus est ab ex quasi temporibus quasi voluptas.</h2><p>Tenetur officia quam omnis asperiores qui et excepturi. Necessitatibus beatae nesciunt dolorem quia vel dolor dolores soluta. Mollitia veniam delectus officia. Magni sed nihil ea architecto debitis accusamus dolorum soluta.</p><h3>Maxime enim quidem earum voluptate perspiciatis.</h3><blockquote>Ut ipsa eos eum impedit ut. Pariatur nihil ad nulla in perspiciatis veniam sed autem. Illo quam velit. Quia facilis excepturi.</blockquote><p>Dolor minima a qui aperiam repudiandae et laborum atque sint. Ut quia optio repellat saepe. Aut impedit minima eveniet. Vel aliquam ipsum sed excepturi. Magni blanditiis quis repellendus enim rerum expedita et</p>.<p>Dolore veniam est non pariatur quos hic. Temporibus optio itaque ipsam ut. Illo voluptas dolores sint.</p>",
             "type": "entertainment",
             "author": "Dwight Schrute",
-            "datffke": "AUG 22, 2021"
+            "date": "AUG 22, 2021"
             
         },
         {
@@ -183,6 +183,6 @@
             "author": "Michael Scott",
             "date": "AUG 22, 2021"
             
-        },
+        }
     ]
 }

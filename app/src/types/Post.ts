@@ -11,7 +11,8 @@ export default class Post{
         public readonly title:string,
         public readonly content:string,
         public readonly author:string,
-        public readonly date: string,
+        public readonly authorImage:string,
+        public readonly pubDate: string,
         public readonly tag: Category,
         public readonly id = Symbol()
     ) {

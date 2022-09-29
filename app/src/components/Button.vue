@@ -21,14 +21,18 @@ const classObject = computed(() => ({
 
 <template>
   <template v-if="href">
-    <a :href="href" :class="[$class, classObject]" v-bind="restAttrs">
+    <a :href="href" :class="$class" v-bind="restAttrs">
       >
-      <slot />
+      <div :class="classObject">
+        <slot />
+      </div>
     </a>
   </template>
   <template v-else>
-    <button :class="[$class, classObject]" v-bind="restAttrs">
-      <slot />
+    <button :class="$class" v-bind="restAttrs">
+      <div :class="classObject">
+        <slot />
+      </div>
     </button>
   </template>
 </template>
