@@ -1,7 +1,8 @@
 <script lang="tsx" setup>
 import bulletinLogo from "@/images/613916ed843f957505f63cbc_bulletin-logo.svg";
-import { HTMLAttributes, ref, SetupContext, watch } from "vue";
-import { useToggle } from "@vueuse/core";
+import { HTMLAttributes, Ref, ref, SetupContext, VNodeRef } from "vue";
+import { useToggle, onClickOutside } from "@vueuse/core";
+
 import useInjectImageDimensions from "@/composables/useInjectImageDimensions";
 
 const imageRef = ref<HTMLImageElement | null>(null);
@@ -9,6 +10,12 @@ const imageRef = ref<HTMLImageElement | null>(null);
 const [showDropDown, toggleDropdown] = useToggle();
 
 useInjectImageDimensions(imageRef, bulletinLogo);
+
+const mobileDropdownFunctionRef: Exclude<VNodeRef, string | Ref<any>> = (
+  element
+) => {
+  onClickOutside(element as HTMLElement, resetAllActiveStatesToFalse);
+};
 
 const linkSets = {
   categories: ["finance", "business", "sports", "entertainment", "travel"],
@@ -46,6 +53,12 @@ function setLinkSetWithTitleAndActiveStateToActiveStateValue(payload: {
   linkSetsWithValueAndAnActiveState.value[payload.linkTitle].active =
     payload.active;
 }
+
+function resetAllActiveStatesToFalse() {
+  Object.values(linkSetsWithValueAndAnActiveState.value).forEach(
+    (value) => (value.active = false)
+  );
+}
 </script>
 
 <template>
@@ -64,9 +77,10 @@ function setLinkSetWithTitleAndActiveStateToActiveStateValue(payload: {
         </div>
       </div>
       <div class="absolute left-0 right-0">
-        <DropDown
+        <MobileDropDown
           :linkSets="linkSetsWithValueAndAnActiveState"
           v-show="!showDropDown"
+          :mobileDropdownFunctionRef="mobileDropdownFunctionRef"
           :aria-hidden="showDropDown"
           @link-title-and-active-state-sent="
             setLinkSetWithTitleAndActiveStateToActiveStateValue
@@ -90,12 +104,31 @@ function DownIcon() {
     </svg>
   );
 }
+
 type DropDownProps = Omit<HTMLAttributes, "class" | "style"> & {
-  linkSets: LinkSetsWithActiveState;
+  linkSets: {
+    [key: string]: {
+      values: Array<string>;
+      active: boolean;
+    };
+  };
+  mobileDropdownFunctionRef: Exclude<VNodeRef, string | Ref<any>>;
 };
 
 const replaceEmptySpaceWithADash = (string: string) =>
   string.replace(/\s+/, "-");
+
+function sendLinkTitleAndActiveState(
+  emit: SetupContext["emit"],
+  linkTitle: string,
+  active: boolean
+) {
+  return () =>
+    emit("linkTitleAndActiveStateSent", {
+      linkTitle,
+      active: !active,
+    });
+}
 
 export default {
   components: {
@@ -111,20 +144,15 @@ export default {
     },
 
     MobileDropDown(
-      { linkSets, ...restAttrs }: DropDownProps,
-      { emit }: SetupContext
+      { linkSets, mobileDropdownFunctionRef, ...restAttrs }: DropDownProps,
+      { emit }
     ) {
       const dropDownLinks = Object.entries(linkSets).map(
         ([linkTitle, { values: links, active }]) => (
           <div {...restAttrs} key={linkTitle}>
             <button
               class="px-4 py-2 flex justify-between w-full"
-              onClick={() =>
-                emit("link-title-and-active-state-sent", {
-                  linkTitle,
-                  active: !active,
-                })
-              }
+              onClick={sendLinkTitleAndActiveState(emit, linkTitle, active)}
             >
               <span class="text-xl capitalize font-semibold">{linkTitle}</span>
               <DownIcon />
@@ -143,14 +171,12 @@ export default {
       );
 
       return (
-        <div class="bg-gray-50 capitalize text-lg">
-          <div class="w-4/5 grid mx-auto py-8">
-            {dropDownLinks}
+        <div class="bg-gray-50 capitalize text-lg py-8">
+          <div class="w-4/5 grid mx-auto gap-12">
+            <div ref={mobileDropdownFunctionRef}>{dropDownLinks}</div>
+
             <div class="transtion-opacity duration-200 ease-in hover:opacity-80">
-              <Button
-                size="lg"
-                class="bg-purple-600 w-full text-gray-50 rounded-lg"
-              >
+              <Button class="bg-purple-600 w-full text-gray-50 rounded-lg">
                 <div class="grid place-items-center">Subscribe</div>
               </Button>
             </div>
