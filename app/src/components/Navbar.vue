@@ -1,9 +1,10 @@
 <script lang="tsx" setup>
 import bulletinLogo from "@/images/613916ed843f957505f63cbc_bulletin-logo.svg";
-import { HTMLAttributes, Ref, ref, SetupContext, VNodeRef } from "vue";
+import { HTMLAttributes, ref, SetupContext } from "vue";
 import { useToggle, onClickOutside } from "@vueuse/core";
 
 import useInjectImageDimensions from "@/composables/useInjectImageDimensions";
+import Button from "./Button.vue";
 
 const imageRef = ref<HTMLImageElement | null>(null);
 
@@ -11,22 +12,25 @@ const [showDropDown, toggleDropdown] = useToggle();
 
 useInjectImageDimensions(imageRef, bulletinLogo);
 
-const mobileDropdownFunctionRef: Exclude<VNodeRef, string | Ref<any>> = (
-  element
-) => {
+const mobileDropdownFunctionRef: FunctionRef = (element) => {
   onClickOutside(element as HTMLElement, resetAllActiveStatesToFalse);
 };
+const destopDropdownFunctionRef: FunctionRef = (element) => {
+  onClickOutside(element as HTMLElement, resetAllActiveStatesToFalse);
+};
+const categories = ["finance", "business", "sports", "entertainment", "travel"];
+const pages = [
+  "landing page 1",
+  "landing page 2",
+  "landing page 3",
+  "landing page 4",
+  "about",
+  "contact",
+];
 
 const linkSets = {
-  categories: ["finance", "business", "sports", "entertainment", "travel"],
-  pages: [
-    "landing page 1",
-    "landing page 2",
-    "landing page 3",
-    "landing page 4",
-    "about",
-    "contact",
-  ],
+  categories,
+  pages,
 };
 
 type LinkSetsWithActiveState = {
@@ -63,36 +67,68 @@ function resetAllActiveStatesToFalse() {
 
 <template>
   <nav>
-    <div class="relative">
+    <div class="isolate">
       <div class="w-5/6 lg:w-4/6 max-w-screen-xl mx-auto">
         <div data-padding-layer class="py-4 px-2">
           <div data-content-layer class="flex justify-between items-center">
             <a href="/">
               <img alt="Bulletin Logo" class="w-40" ref="imageRef" />
             </a>
-            <button data-hamburger-menu @click="toggleDropdown()">
-              <HamburgerIcon />
-            </button>
+
+            <div class="hidden lg:block">
+              <div class="flex gap-4 items-center">
+                <DesktopDropDown
+                  :linkSets="linkSetsWithValueAndAnActiveState"
+                  :desktopDropdownFunctionRef="destopDropdownFunctionRef"
+                  @link-title-and-active-state-sent="
+                    setLinkSetWithTitleAndActiveStateToActiveStateValue
+                  "
+                />
+                <Button
+                  class="text-md text-gray-50 rounded-md bg-purple-700"
+                  size="sm"
+                >
+                  Subscribe
+                </Button>
+              </div>
+            </div>
+            <div class="lg:hidden">
+              <button data-hamburger-menu @click="toggleDropdown()">
+                <HamburgerIcon />
+              </button>
+            </div>
           </div>
         </div>
       </div>
-      <div class="absolute left-0 right-0">
-        <MobileDropDown
-          :linkSets="linkSetsWithValueAndAnActiveState"
-          v-show="!showDropDown"
-          :mobileDropdownFunctionRef="mobileDropdownFunctionRef"
-          :aria-hidden="showDropDown"
-          @link-title-and-active-state-sent="
-            setLinkSetWithTitleAndActiveStateToActiveStateValue
-          "
-        />
+
+      <div class="lg:hidden">
+        <div class="absolute w-full py-8 -z-10">
+          <Transition
+            enter-from-class="-translate-y-full opacity-0"
+            enter-to-class="translate-y-0 opacity-80"
+            enter-active-class="transition duration-500 ease-in"
+            leave-active-class="transition duration-500 ease-out"
+            leave-from-class="translate-y-0 opacity-80"
+            leave-to-class="-translate-y-full opacity-0"
+          >
+            <MobileDropDown
+              :linkSets="linkSetsWithValueAndAnActiveState"
+              v-show="!showDropDown"
+              :mobileDropdownFunctionRef="mobileDropdownFunctionRef"
+              :aria-hidden="showDropDown"
+              @link-title-and-active-state-sent="
+                setLinkSetWithTitleAndActiveStateToActiveStateValue
+              "
+            />
+          </Transition>
+        </div>
       </div>
     </div>
   </nav>
 </template>
 
 <script lang="tsx">
-import Button from "./Button.vue";
+import { FunctionRef } from "@/types";
 
 function DownIcon() {
   return (
@@ -112,11 +148,18 @@ type DropDownProps = Omit<HTMLAttributes, "class" | "style"> & {
       active: boolean;
     };
   };
-  mobileDropdownFunctionRef: Exclude<VNodeRef, string | Ref<any>>;
+};
+
+type MobileDropDownProps = DropDownProps & {
+  mobileDropdownFunctionRef: FunctionRef;
+};
+
+type DesktopDropDownProps = DropDownProps & {
+  desktopDropdownFunctionRef: FunctionRef;
 };
 
 const replaceEmptySpaceWithADash = (string: string) =>
-  string.replace(/\s+/, "-");
+  string.replace(/\s+/g, "-");
 
 function sendLinkTitleAndActiveState(
   emit: SetupContext["emit"],
@@ -143,12 +186,68 @@ export default {
       );
     },
 
-    MobileDropDown(
-      { linkSets, mobileDropdownFunctionRef, ...restAttrs }: DropDownProps,
-      { emit }
-    ) {
-      const dropDownLinks = Object.entries(linkSets).map(
-        ([linkTitle, { values: links, active }]) => (
+    DesktopDropDown(props: DesktopDropDownProps, { emit }) {
+      const { linkSets, desktopDropdownFunctionRef, ...restAttrs } = props;
+
+      const linkSetEntries = Object.entries(linkSets);
+
+      const popupLinks = linkSetEntries.map(
+        ([linkTitle, { values: links, active }]) => {
+          return (
+            <div class="relative">
+              <li>
+                <button
+                  onClick={sendLinkTitleAndActiveState(emit, linkTitle, active)}
+                  class="capitalize font-semibold hover:text-gray-500"
+                >
+                  <div class="px-4 py-6">
+                    <div class="flex gap-2">
+                      <span>{linkTitle}</span>
+                      <DownIcon />
+                    </div>
+                  </div>
+                </button>
+              </li>
+
+              <div
+                class="absolute top-full -left-6"
+                ref={desktopDropdownFunctionRef}
+                style={{ display: active ? "block" : "none" }}
+              >
+                <ul class="rounded-md shadow-lg shadow-gray-400">
+                  {links.map((link) => (
+                    <li class="capitalize hover:text-gray-500">
+                      <a
+                        href={`/${replaceEmptySpaceWithADash(link)}`}
+                        class=" block px-4 py-6"
+                      >
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          );
+        }
+      );
+
+      return (
+        <div {...restAttrs}>
+          <ul class="flex gap-4">{popupLinks}</ul>
+        </div>
+      );
+    },
+
+    MobileDropDown(props: MobileDropDownProps, { emit }) {
+      const { linkSets, mobileDropdownFunctionRef, ...restAttrs } = props;
+
+      const linkSetEntries = Object.entries(linkSets);
+
+      const dropDownLinks = linkSetEntries.map((linkSetEntry) => {
+        const [linkTitle, { values: links, active }] = linkSetEntry;
+
+        return (
           <div {...restAttrs} key={linkTitle}>
             <button
               class="px-4 py-2 flex justify-between w-full"
@@ -167,8 +266,8 @@ export default {
               ))}
             </ul>
           </div>
-        )
-      );
+        );
+      });
 
       return (
         <div class="bg-gray-50 capitalize text-lg py-8">
