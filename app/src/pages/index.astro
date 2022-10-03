@@ -1,11 +1,126 @@
 ---
-// import AstroTopFrameWorksCircle from "@/components/AstroTopFrameWorksCircle.astro";
 // import Container from "@/components/Container.astro";
 // import Gap from "@/components/Gap.astro";
-import HMFLayout from "@/layouts/HMFLayout.astro";
-// const posts = await fetch("").then((response) => response.json());
+import MainLayout from "@/components/MainLayout.astro";
+import PostCard from "@/components/PostCard.astro";
+import SubscriptionForm from "@/components/SubscriptionForm.astro";
+import Post from "@/types/Post";
+// import Debug from "astro/components/Debug.astro";
+
+const { posts } = (await fetch(
+  new URL("/src/mock-data/posts.json", Astro.url)
+).then((response) => response.json())) as { posts: Array<Post> };
+
+const subtractPrevPostDateTimestampFromNextPostDateTimestamp = (
+  prevPost: Post,
+  nextPost: Post
+) =>
+  new Date(nextPost.pubDate).getTime() - new Date(prevPost.pubDate).getTime();
+
+const latestPosts = [...posts].sort(
+  subtractPrevPostDateTimestampFromNextPostDateTimestamp
+);
+
+const latestFourPosts = latestPosts.slice(0, 4);
+
+const postTags: Array<string> = [];
+
+const featuredPosts = posts.filter((post) => {
+  if (!postTags.includes(post.tag)) {
+    postTags.push(post.tag);
+
+    return post;
+  }
+  return;
+});
+
+const firstFeaturedPost = featuredPosts.at(0);
 ---
 
-<HMFLayout title="Home">
-  <!-- Content  -->
-</HMFLayout>
+<MainLayout title="Home">
+  <Fragment slot="header">
+    <SubscriptionForm
+      title="A blog that people will actually want to read"
+      content="People use Bulletin to share big ideas with the world on a regular basis with a focus on accessibility and usability."
+      buttonText="Try it"
+    />
+  </Fragment>
+  <Fragment slot="main">
+    <section class="grid gap-2 px-4 py-6" aria-labelledby="featured-posts">
+      <h2 id="featured-posts">Featured Posts</h2>
+
+      <div class="grid gap-2 grid-rows-[42rem,min-content]">
+        <div class="">
+          {
+            (() => {
+              if (firstFeaturedPost) {
+                return (
+                  <PostCard
+                    class="grid grid-rows-[60%,min-content] h-full"
+                    title={firstFeaturedPost.title}
+                    author={firstFeaturedPost.author}
+                    image={firstFeaturedPost.image}
+                    thumbnail={firstFeaturedPost.thumbnail}
+                    pubDate={firstFeaturedPost.pubDate}
+                    tag={firstFeaturedPost.tag}
+                  />
+                );
+              }
+            })()
+          }
+        </div>
+        <ul class="grid gap-4">
+          {
+            (function* () {
+              if (featuredPosts.length === 0) return;
+              for (const featuredPost of featuredPosts) {
+                yield (
+                  <li>
+                    <PostCard
+                      title={featuredPost.title}
+                      author={featuredPost.author}
+                      image={featuredPost.image}
+                      thumbnail={featuredPost.thumbnail}
+                      pubDate={featuredPost.pubDate}
+                      tag={featuredPost.tag}
+                    />
+                  </li>
+                );
+              }
+            })()
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section class="grid gap-4 px-4 py-6" aria-labelledby="latest-posts ">
+      <h2 id="latest-posts">Latest Posts</h2>
+
+      <ul class="grid gap-4">
+        {
+          (function* () {
+            if (latestFourPosts.length === 0) return;
+            for (const latestPost of latestFourPosts) {
+              yield (
+                <li>
+                  <PostCard
+                    class="flex flex-row-reverse"
+                    headerClass={"w-2/5"}
+                    footerClass={"px-2 py-4 w-3/5"}
+                    title={latestPost.title}
+                    image={latestPost.image}
+                    thumbnail={latestPost.thumbnail}
+                    author={latestPost.author}
+                    pubDate={latestPost.pubDate}
+                    tag={latestPost.tag}
+                    title={latestPost.title}
+                  />
+                </li>
+              );
+            }
+          })()
+        }
+      </ul>
+    </section>
+  </Fragment>
+</MainLayout>

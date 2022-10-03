@@ -1,47 +1,64 @@
 ---
 import Post from "@/types/Post";
 
-type Props = Omit<Post, "content" | "id"> &
-  Partial<Record<"class" | "imageClass", string>>;
+type OptionalProps = Partial<
+  Record<"class" | "headerClass" | "footerClass", string>
+>;
+type Props = Omit<Post, "content" | "id" | "authorImage"> & OptionalProps;
+
+const numberId = (Math.random() * Date.now()).toString(32);
 
 const {
   author,
-  authorImage,
+  thumbnail,
   tag,
+  footerClass,
+  headerClass,
   title,
   pubDate,
   class: $class = "",
-  imageClass = "",
-} = Astro.props as Props;
-
-const image = new Image();
-
-image.src = authorImage;
-
+} = Astro.props;
+const { protocol, host } = Astro.url;
 const alteredDate = new Date(pubDate).toLocaleString();
 ---
 
 <div class={$class}>
-  <header>
+  <header class={headerClass}>
     <img
-      src={authorImage}
       alt=""
-      class:list={["rounded-sm object-cover h-2/5", imageClass]}
-      width={image.naturalWidth}
-      height={image.naturalHeight}
+      id={numberId}
+      class:list={["rounded-sm object-cover w-full h-full"]}
     />
   </header>
-  <footer>
+
+  <footer class:list={["grid gap-4 px-2 py-3", footerClass]}>
     <div class="grid gap-2">
-      <div class="text-purple-700 uppercase">{tag}</div>
-      <div class="leading-5">
+      <div class="text-violet-700 uppercase">{tag}</div>
+      <div class="text-2xl font-extrabold">
         {title}
       </div>
     </div>
-    <div class="text-gray-400 flex gap-1">
+
+    <div class="text-gray-400 flex gap-2 items-center">
       <div class="uppercase">{author}</div>
-      <div>&middot;</div>
+      <div class="w-2 h-2 bg-current rounded"></div>
       <time datetime={alteredDate}>{pubDate}</time>
     </div>
   </footer>
 </div>
+
+<script define:vars={{ thumbnail, url: Astro.url, numberId }}>
+  const thumbnailWrapper = new Image();
+
+  thumbnailWrapper.src = new URL(thumbnail, url).href;
+
+  const imageEl = document.getElementById(numberId);
+
+  if (imageEl) {
+    thumbnailWrapper.onload = (event) => {
+      imageEl.src = event.target.src;
+      imageEl.width = event.target.naturalWidth;
+      imageEl.height = event.target.naturalHeight;
+    };
+  }
+</script>

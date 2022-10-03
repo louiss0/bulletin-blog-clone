@@ -113,7 +113,7 @@ function resetAllActiveStatesToFalse() {
           >
             <MobileDropDown
               :linkSets="linkSetsWithValueAndAnActiveState"
-              v-show="!showDropDown"
+              v-show="showDropDown"
               :mobileDropdownFunctionRef="mobileDropdownFunctionRef"
               :aria-hidden="showDropDown"
               @link-title-and-active-state-sent="
@@ -129,6 +129,7 @@ function resetAllActiveStatesToFalse() {
 
 <script lang="tsx">
 import { FunctionRef } from "@/types";
+import { replaceEmptySpaceWithADash } from "@/utils";
 
 function DownIcon() {
   return (
@@ -157,9 +158,6 @@ type MobileDropDownProps = DropDownProps & {
 type DesktopDropDownProps = DropDownProps & {
   desktopDropdownFunctionRef: FunctionRef;
 };
-
-const replaceEmptySpaceWithADash = (string: string) =>
-  string.replace(/\s+/g, "-");
 
 function sendLinkTitleAndActiveState(
   emit: SetupContext["emit"],

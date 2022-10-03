@@ -1,0 +1,92 @@
+---
+import HMFLayout from "@/layouts/HMFLayout.astro";
+import { replaceEmptySpaceWithADash } from "@/utils";
+import SubscriptionForm from "@/components/SubscriptionForm.astro";
+import Container from "./Container.astro";
+
+interface Props {
+  title: string;
+}
+
+const mainPages = [
+  "landing page 1",
+  "landing page 2",
+  "landing page 3",
+  "landing page 4",
+  "about",
+  "contact",
+];
+
+const infoPages = ["licenses", "style guide", "changelog", "password", "404"];
+
+const socialMediaLinks = ["twitter", "instagram", "facebook"];
+
+const { title } = Astro.props;
+---
+
+<HMFLayout title={title}>
+  <Fragment slot="header">
+    <slot name="header" />
+  </Fragment>
+
+  <Fragment slot="main">
+    <slot name="main" />
+    <SubscriptionForm
+      title="Get our weekly email"
+      content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum et lacus varius, dapibus leo eget."
+      buttonText="Sign Up"
+    />
+  </Fragment>
+
+  <div class="py-20" slot="footer">
+    <Container widthClass={"w-10/12"}>
+      <div class="grid gap-16 lg:flex lg:justify-between">
+        <div class="grid gap-1 lg:gap-3 text-lg">
+          <div class="flex gap-1">
+            <span class="font-bold">&copy;</span> Bulletin
+          </div>
+          <div>
+            Powered by <a class="underline" href="www.webflow.com">Webflow</a>.
+          </div>
+        </div>
+        <div class="capitalize text-xl">
+          <div class="flex gap-4 md:gap-8">
+            <ul class="grid gap-1">
+              {
+                mainPages.map((mainPage) => (
+                  <li>
+                    <a href={`/${replaceEmptySpaceWithADash(mainPage)}`}>
+                      {mainPage}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+            <ul class="grid gap-1">
+              {
+                infoPages.map((infoPage) => (
+                  <li>
+                    <a href={`/${replaceEmptySpaceWithADash(infoPage)}`}>
+                      {infoPage}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+            <ul class="grid gap-1">
+              {
+                socialMediaLinks.map((socialMediaLink) => (
+                  <li>
+                    <a href={`/${replaceEmptySpaceWithADash(socialMediaLink)}`}>
+                      {socialMediaLink}
+                    </a>
+                  </li>
+                ))
+              }
+            </ul>
+          </div>
+        </div>
+      </div>
+    </Container>
+  </div>
+</HMFLayout>

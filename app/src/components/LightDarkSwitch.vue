@@ -40,7 +40,7 @@ const toggle = useToggle(isDark);
 <script lang="tsx">
 function MoonIcon() {
   return (
-    <svg class="w-12 text-purple-600" viewBox="0 0 24 24">
+    <svg class="w-12 text-violet-600" viewBox="0 0 24 24">
       <path
         fill="currentColor"
         fill-rule="evenodd"
