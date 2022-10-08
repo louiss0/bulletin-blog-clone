@@ -13,9 +13,11 @@ const [showDropDown, toggleDropdown] = useToggle();
 useInjectImageDimensions(imageRef, bulletinLogo);
 
 const mobileDropdownFunctionRef: FunctionRef = (element) => {
+  console.log("mobileDropdownFunctionRef");
   onClickOutside(element as HTMLElement, resetAllActiveStatesToFalse);
 };
 const destopDropdownFunctionRef: FunctionRef = (element) => {
+  console.log("destopDropdownFunctionRef");
   onClickOutside(element as HTMLElement, resetAllActiveStatesToFalse);
 };
 const categories = ["finance", "business", "sports", "entertainment", "travel"];
@@ -67,7 +69,7 @@ function resetAllActiveStatesToFalse() {
 
 <template>
   <nav>
-    <div class="isolate">
+    <div class="relative">
       <div class="w-5/6 lg:w-4/6 max-w-screen-xl mx-auto">
         <div data-padding-layer class="py-4 px-2">
           <div data-content-layer class="flex justify-between items-center">
@@ -101,8 +103,8 @@ function resetAllActiveStatesToFalse() {
         </div>
       </div>
 
-      <div class="lg:hidden">
-        <div class="absolute w-full py-8 -z-10">
+      <div class="absolute w-full top-full z-10">
+        <div class="lg:hidden">
           <Transition
             enter-from-class="-translate-y-full opacity-0"
             enter-to-class="translate-y-0 opacity-80"
@@ -189,50 +191,56 @@ export default {
 
       const linkSetEntries = Object.entries(linkSets);
 
-      const popupLinks = linkSetEntries.map(
-        ([linkTitle, { values: links, active }]) => {
-          return (
-            <div class="relative">
-              <li>
-                <button
-                  onClick={sendLinkTitleAndActiveState(emit, linkTitle, active)}
-                  class="capitalize font-semibold hover:text-gray-500"
-                >
-                  <div class="px-4 py-6">
-                    <div class="flex gap-2">
-                      <span>{linkTitle}</span>
-                      <DownIcon />
-                    </div>
-                  </div>
-                </button>
-              </li>
-
-              <div
-                class="absolute top-full -left-6"
-                ref={desktopDropdownFunctionRef}
-                style={{ display: active ? "block" : "none" }}
-              >
-                <ul class="rounded-md shadow-lg shadow-gray-400">
-                  {links.map((link) => (
-                    <li class="capitalize hover:text-gray-500">
-                      <a
-                        href={`/${replaceEmptySpaceWithADash(link)}`}
-                        class=" block px-4 py-6"
-                      >
-                        {link}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          );
-        }
-      );
-
       return (
         <div {...restAttrs}>
-          <ul class="flex gap-4">{popupLinks}</ul>
+          <ul class="flex gap-4">
+            {linkSetEntries.map(([linkTitle, { values: links, active }]) => {
+              return (
+                <div class="relative">
+                  <li>
+                    <button
+                      onClick={sendLinkTitleAndActiveState(
+                        emit,
+                        linkTitle,
+                        active
+                      )}
+                      class="capitalize font-semibold hover:text-gray-500"
+                    >
+                      <div class="px-4 py-6">
+                        <div class="flex gap-2">
+                          <span>{linkTitle}</span>
+                          <DownIcon />
+                        </div>
+                      </div>
+                    </button>
+
+                    <div
+                      class="absolute top-full"
+                      ref={desktopDropdownFunctionRef}
+                      style={{ display: active ? "block" : "none" }}
+                    >
+                      <div class="bg-gray-50 rounded-3xl shadow-lg shadow-gray-400">
+                        <ul class="">
+                          <div class="w-56">
+                            {links.map((link) => (
+                              <li class="capitalize px-4 py-6 hover:text-gray-500">
+                                <a
+                                  href={`/${replaceEmptySpaceWithADash(link)}`}
+                                  class=" block "
+                                >
+                                  {link}
+                                </a>
+                              </li>
+                            ))}
+                          </div>
+                        </ul>
+                      </div>
+                    </div>
+                  </li>
+                </div>
+              );
+            })}
+          </ul>
         </div>
       );
     },
@@ -242,35 +250,41 @@ export default {
 
       const linkSetEntries = Object.entries(linkSets);
 
-      const dropDownLinks = linkSetEntries.map((linkSetEntry) => {
-        const [linkTitle, { values: links, active }] = linkSetEntry;
-
-        return (
-          <div {...restAttrs} key={linkTitle}>
-            <button
-              class="px-4 py-2 flex justify-between w-full"
-              onClick={sendLinkTitleAndActiveState(emit, linkTitle, active)}
-            >
-              <span class="text-xl capitalize font-semibold">{linkTitle}</span>
-              <DownIcon />
-            </button>
-            <ul style={{ display: active ? "block" : "none" }}>
-              {links.map((link) => (
-                <li class="font-medium" key={link}>
-                  <a href={`/${replaceEmptySpaceWithADash(link)}`}>
-                    <div class="px-6 py-3">{link}</div>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        );
-      });
-
       return (
         <div class="bg-gray-50 capitalize text-lg py-8">
           <div class="w-4/5 grid mx-auto gap-12">
-            <div ref={mobileDropdownFunctionRef}>{dropDownLinks}</div>
+            <div ref={mobileDropdownFunctionRef} {...restAttrs}>
+              {linkSetEntries.map((linkSetEntry) => {
+                const [linkTitle, { values: links, active }] = linkSetEntry;
+
+                return (
+                  <div key={linkTitle}>
+                    <button
+                      class="px-4 py-2 flex justify-between w-full"
+                      onClick={sendLinkTitleAndActiveState(
+                        emit,
+                        linkTitle,
+                        active
+                      )}
+                    >
+                      <span class="text-xl capitalize font-semibold">
+                        {linkTitle}
+                      </span>
+                      <DownIcon />
+                    </button>
+                    <ul style={{ display: active ? "block" : "none" }}>
+                      {links.map((link) => (
+                        <li class="font-medium" key={link}>
+                          <a href={`/${replaceEmptySpaceWithADash(link)}`}>
+                            <div class="px-6 py-3">{link}</div>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
 
             <div class="transtion-opacity duration-200 ease-in hover:opacity-80">
               <Button class="bg-purple-600 w-full text-gray-50 rounded-lg">

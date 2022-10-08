@@ -1,11 +1,9 @@
 ---
-// import Container from "@/components/Container.astro";
-// import Gap from "@/components/Gap.astro";
+import Container from "@/components/Container.astro";
 import MainLayout from "@/components/MainLayout.astro";
 import PostCard from "@/components/PostCard.astro";
 import SubscriptionForm from "@/components/SubscriptionForm.astro";
 import Post from "@/types/Post";
-// import Debug from "astro/components/Debug.astro";
 
 const { posts } = (await fetch(
   new URL("/src/mock-data/posts.json", Astro.url)
@@ -23,9 +21,21 @@ const latestPosts = [...posts].sort(
 
 const latestFourPosts = latestPosts.slice(0, 4);
 
+const tenRandomPosts = posts.slice(0, 10).reduceRight((acc, _, i, array) => {
+  let j = Math.floor(Math.random() * (i + 1));
+
+  const firstItem = array[i]!;
+  const secondItem = array[j]!;
+
+  acc[i] = firstItem;
+  acc[j] = secondItem;
+
+  return acc;
+}, [] as typeof posts);
+
 const postTags: Array<string> = [];
 
-const featuredPosts = posts.filter((post) => {
+const [firstFeaturedPost, ...restofTheFeaturedPosts] = posts.filter((post) => {
   if (!postTags.includes(post.tag)) {
     postTags.push(post.tag);
 
@@ -33,8 +43,6 @@ const featuredPosts = posts.filter((post) => {
   }
   return;
 });
-
-const firstFeaturedPost = featuredPosts.at(0);
 ---
 
 <MainLayout title="Home">
@@ -46,17 +54,17 @@ const firstFeaturedPost = featuredPosts.at(0);
     />
   </Fragment>
   <Fragment slot="main">
-    <section class="grid gap-2 px-4 py-6" aria-labelledby="featured-posts">
-      <h2 id="featured-posts">Featured Posts</h2>
-
-      <div class="grid gap-2 grid-rows-[42rem,min-content]">
-        <div class="">
+    <section class="grid gap-2 px-4 py-6" aria-label="featured-posts">
+      <Container>
+        <div class:list={["grid gap-2", "lg:grid-cols-2 lg:gap-12"]}>
           {
             (() => {
               if (firstFeaturedPost) {
                 return (
                   <PostCard
-                    class="grid grid-rows-[60%,min-content] h-full"
+                    class="h-full"
+                    headerClass={"rounded-md lg:h-3/5"}
+                    footerClass={"lg:gap-16"}
                     title={firstFeaturedPost.title}
                     author={firstFeaturedPost.author}
                     image={firstFeaturedPost.image}
@@ -68,59 +76,102 @@ const firstFeaturedPost = featuredPosts.at(0);
               }
             })()
           }
-        </div>
-        <ul class="grid gap-4">
-          {
-            (function* () {
-              if (featuredPosts.length === 0) return;
-              for (const featuredPost of featuredPosts) {
-                yield (
-                  <li>
-                    <PostCard
-                      title={featuredPost.title}
-                      author={featuredPost.author}
-                      image={featuredPost.image}
-                      thumbnail={featuredPost.thumbnail}
-                      pubDate={featuredPost.pubDate}
-                      tag={featuredPost.tag}
-                    />
-                  </li>
-                );
+          <div class="grid gap-6">
+            <h2 id="featured-posts">Featured Posts</h2>
+            <ul class="grid gap-4 divide-y-2 divide-gray-400">
+              {
+                (function* () {
+                  if (restofTheFeaturedPosts.length === 0) return;
+                  for (const featuredPost of restofTheFeaturedPosts) {
+                    yield (
+                      <li class="py-4">
+                        <PostCard
+                          class={"flex flex-row-reverse"}
+                          headerClass={"rounded-xl basis-2/5"}
+                          title={featuredPost.title}
+                          author={featuredPost.author}
+                          image={featuredPost.image}
+                          thumbnail={featuredPost.thumbnail}
+                          pubDate={featuredPost.pubDate}
+                          tag={featuredPost.tag}
+                          footerClass={"basis-3/5"}
+                        />
+                      </li>
+                    );
+                  }
+                })()
               }
-            })()
-          }
-        </ul>
-      </div>
+            </ul>
+          </div>
+        </div>
+      </Container>
     </section>
 
-    <section class="grid gap-4 px-4 py-6" aria-labelledby="latest-posts ">
-      <h2 id="latest-posts">Latest Posts</h2>
-
-      <ul class="grid gap-4">
-        {
-          (function* () {
-            if (latestFourPosts.length === 0) return;
-            for (const latestPost of latestFourPosts) {
-              yield (
-                <li>
-                  <PostCard
-                    class="flex flex-row-reverse"
-                    headerClass={"w-2/5"}
-                    footerClass={"px-2 py-4 w-3/5"}
-                    title={latestPost.title}
-                    image={latestPost.image}
-                    thumbnail={latestPost.thumbnail}
-                    author={latestPost.author}
-                    pubDate={latestPost.pubDate}
-                    tag={latestPost.tag}
-                    title={latestPost.title}
-                  />
-                </li>
-              );
+    <section class="px-6 py-8" aria-labelledby="latest-posts ">
+      <Container maxWidthClass={"max-w-screen-xl"}>
+        <div class="grid gap-6">
+          <h2 id="latest-posts">Latest Posts</h2>
+          <ul class="grid gap-4 lg:flex">
+            {
+              (function* () {
+                if (latestFourPosts.length === 0) return;
+                for (const latestPost of latestFourPosts) {
+                  yield (
+                    <li class="flex-1">
+                      <PostCard
+                        class={"h-full"}
+                        headerClass={"rounded-2xl"}
+                        footerClass={"px-2 py-4"}
+                        title={latestPost.title}
+                        image={latestPost.image}
+                        thumbnail={latestPost.thumbnail}
+                        author={latestPost.author}
+                        pubDate={latestPost.pubDate}
+                        tag={latestPost.tag}
+                        title={latestPost.title}
+                        footerClass={"w-full"}
+                      />
+                    </li>
+                  );
+                }
+              })()
             }
-          })()
-        }
-      </ul>
+          </ul>
+        </div>
+      </Container>
+    </section>
+
+    <section class="grid gap-4 px-4 py-6" aria-labelledby="more-posts">
+      <Container>
+        <div class="grid gap-12">
+          <h2 id="more-posts">More Posts</h2>
+          <ul class="grid gap-4 lg:grid-cols-2 lg:grid-rows-5">
+            {
+              (function* () {
+                if (tenRandomPosts.length === 0) return;
+                for (const randomPost of tenRandomPosts) {
+                  yield (
+                    <li>
+                      <PostCard
+                        class={"lg:flex gap-4"}
+                        headerClass={"rounded-2xl basis-2/5"}
+                        title={randomPost.title}
+                        image={randomPost.image}
+                        thumbnail={randomPost.thumbnail}
+                        author={randomPost.author}
+                        pubDate={randomPost.pubDate}
+                        tag={randomPost.tag}
+                        title={randomPost.title}
+                        footerClass={"basis-3/5"}
+                      />
+                    </li>
+                  );
+                }
+              })()
+            }
+          </ul>
+        </div>
+      </Container>
     </section>
   </Fragment>
 </MainLayout>
