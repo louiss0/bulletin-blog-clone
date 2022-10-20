@@ -1,6 +1,6 @@
 <script lang="tsx" setup>
 import bulletinLogo from "@/images/613916ed843f957505f63cbc_bulletin-logo.svg";
-import { HTMLAttributes, ref, SetupContext } from "vue";
+import { FunctionalComponent, HTMLAttributes, ref, SetupContext } from "vue";
 import { useToggle, onClickOutside } from "@vueuse/core";
 
 import useInjectImageDimensions from "@/composables/useInjectImageDimensions";
@@ -13,11 +13,9 @@ const [showDropDown, toggleDropdown] = useToggle();
 useInjectImageDimensions(imageRef, bulletinLogo);
 
 const mobileDropdownFunctionRef: FunctionRef = (element) => {
-  console.log("mobileDropdownFunctionRef");
   onClickOutside(element as HTMLElement, resetAllActiveStatesToFalse);
 };
 const destopDropdownFunctionRef: FunctionRef = (element) => {
-  console.log("destopDropdownFunctionRef");
   onClickOutside(element as HTMLElement, resetAllActiveStatesToFalse);
 };
 const categories = ["finance", "business", "sports", "entertainment", "travel"];
@@ -79,7 +77,7 @@ function resetAllActiveStatesToFalse() {
 
             <div class="hidden lg:block">
               <div class="flex gap-4 items-center">
-                <DesktopDropDown
+                <LinksWithDropdowns
                   :linkSets="linkSetsWithValueAndAnActiveState"
                   :desktopDropdownFunctionRef="destopDropdownFunctionRef"
                   @link-title-and-active-state-sent="
@@ -117,7 +115,6 @@ function resetAllActiveStatesToFalse() {
               :linkSets="linkSetsWithValueAndAnActiveState"
               v-show="showDropDown"
               :mobileDropdownFunctionRef="mobileDropdownFunctionRef"
-              :aria-hidden="showDropDown"
               @link-title-and-active-state-sent="
                 setLinkSetWithTitleAndActiveStateToActiveStateValue
               "
@@ -133,17 +130,6 @@ function resetAllActiveStatesToFalse() {
 import { FunctionRef } from "@/types";
 import { replaceEmptySpaceWithADash } from "@/utils";
 
-function DownIcon() {
-  return (
-    <svg class="w-6 h-6 " viewBox="0 0 24 24">
-      <path
-        fill="currentColor"
-        d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6l-6-6l1.41-1.41z"
-      />
-    </svg>
-  );
-}
-
 type DropDownProps = Omit<HTMLAttributes, "class" | "style"> & {
   linkSets: {
     [key: string]: {
@@ -153,13 +139,15 @@ type DropDownProps = Omit<HTMLAttributes, "class" | "style"> & {
   };
 };
 
-type MobileDropDownProps = DropDownProps & {
-  mobileDropdownFunctionRef: FunctionRef;
-};
+type MobileDropDownProps = DropDownProps &
+  Record<"mobileDropdownFunctionRef", FunctionRef>;
+type DesktopDropDownProps = DropDownProps &
+  Record<"desktopDropdownFunctionRef", FunctionRef>;
 
-type DesktopDropDownProps = DropDownProps & {
-  desktopDropdownFunctionRef: FunctionRef;
-};
+type MobileDropDownListProps = Omit<
+  TitleAndActiveObject & DropdownListProps,
+  "linkTitle"
+>;
 
 function sendLinkTitleAndActiveState(
   emit: SetupContext["emit"],
@@ -172,129 +160,252 @@ function sendLinkTitleAndActiveState(
       active: !active,
     });
 }
+type DropdownListProps = { links: Array<string> };
+type TitleAndActiveObject = {
+  linkTitle: string;
+  active: boolean;
+};
 
-export default {
-  components: {
-    HamburgerIcon() {
-      return (
-        <svg class="w-8 h-8 " viewBox="0 0 24 24">
-          <path
-            fill="currentColor"
-            d="M3 18v-2h18v2Zm0-5v-2h18v2Zm0-5V6h18v2Z"
-          />
-        </svg>
-      );
-    },
+type LinkWithADropDownListProps = TitleAndActiveObject &
+  Record<"desktopDropdownFunctionRef", FunctionRef> &
+  DropdownListProps;
 
-    DesktopDropDown(props: DesktopDropDownProps, { emit }) {
-      const { linkSets, desktopDropdownFunctionRef, ...restAttrs } = props;
+type ButtonWithDropDownListProps = TitleAndActiveObject & DropdownListProps;
 
-      const linkSetEntries = Object.entries(linkSets);
+namespace Components {
+  export function HamburgerIcon() {
+    return (
+      <svg class="w-8 h-8 " viewBox="0 0 24 24">
+        <path fill="currentColor" d="M3 18v-2h18v2Zm0-5v-2h18v2Zm0-5V6h18v2Z" />
+      </svg>
+    );
+  }
 
-      return (
-        <div {...restAttrs}>
-          <ul class="flex gap-4">
-            {linkSetEntries.map(([linkTitle, { values: links, active }]) => {
-              return (
-                <div class="relative">
-                  <li>
-                    <button
-                      onClick={sendLinkTitleAndActiveState(
-                        emit,
-                        linkTitle,
-                        active
-                      )}
-                      class="capitalize font-semibold hover:text-gray-500"
-                    >
-                      <div class="px-4 py-6">
-                        <div class="flex gap-2">
-                          <span>{linkTitle}</span>
-                          <DownIcon />
-                        </div>
-                      </div>
-                    </button>
+  function DownIcon() {
+    return (
+      <svg class="w-6 h-6 " viewBox="0 0 24 24">
+        <path
+          fill="currentColor"
+          d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6l-6-6l1.41-1.41z"
+        />
+      </svg>
+    );
+  }
 
-                    <div
-                      class="absolute top-full"
-                      ref={desktopDropdownFunctionRef}
-                      style={{ display: active ? "block" : "none" }}
-                    >
-                      <div class="bg-gray-50 rounded-3xl shadow-lg shadow-gray-400">
-                        <ul class="">
-                          <div class="w-56">
-                            {links.map((link) => (
-                              <li class="capitalize px-4 py-6 hover:text-gray-500">
-                                <a
-                                  href={`/${replaceEmptySpaceWithADash(link)}`}
-                                  class=" block "
-                                >
-                                  {link}
-                                </a>
-                              </li>
-                            ))}
-                          </div>
-                        </ul>
-                      </div>
-                    </div>
-                  </li>
-                </div>
-              );
-            })}
-          </ul>
-        </div>
-      );
-    },
+  const LinkWithADropDownList: FunctionalComponent<
+    LinkWithADropDownListProps
+  > = (props, ctx) => {
+    const { linkTitle, active, links, desktopDropdownFunctionRef } = props;
+    const { emit } = ctx;
 
-    MobileDropDown(props: MobileDropDownProps, { emit }) {
-      const { linkSets, mobileDropdownFunctionRef, ...restAttrs } = props;
+    const displayActiveOrBlock = active ? "block" : "none";
 
-      const linkSetEntries = Object.entries(linkSets);
-
-      return (
-        <div class="bg-gray-50 capitalize text-lg py-8">
-          <div class="w-4/5 grid mx-auto gap-12">
-            <div ref={mobileDropdownFunctionRef} {...restAttrs}>
-              {linkSetEntries.map((linkSetEntry) => {
-                const [linkTitle, { values: links, active }] = linkSetEntry;
-
-                return (
-                  <div key={linkTitle}>
-                    <button
-                      class="px-4 py-2 flex justify-between w-full"
-                      onClick={sendLinkTitleAndActiveState(
-                        emit,
-                        linkTitle,
-                        active
-                      )}
-                    >
-                      <span class="text-xl capitalize font-semibold">
-                        {linkTitle}
-                      </span>
-                      <DownIcon />
-                    </button>
-                    <ul style={{ display: active ? "block" : "none" }}>
-                      {links.map((link) => (
-                        <li class="font-medium" key={link}>
-                          <a href={`/${replaceEmptySpaceWithADash(link)}`}>
-                            <div class="px-6 py-3">{link}</div>
-                          </a>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div class="transtion-opacity duration-200 ease-in hover:opacity-80">
-              <Button class="bg-purple-600 w-full text-gray-50 rounded-lg">
-                <div class="grid place-items-center">Subscribe</div>
-              </Button>
+    return (
+      <li class="relative">
+        <button
+          onClick={sendLinkTitleAndActiveState(emit, linkTitle, active)}
+          class="capitalize font-semibold hover:text-gray-500"
+        >
+          <div class="px-4 py-6">
+            <div class="flex gap-2">
+              <span>{linkTitle}</span>
+              <DownIcon />
             </div>
           </div>
+        </button>
+
+        <div
+          class="absolute top-full"
+          ref={desktopDropdownFunctionRef}
+          style={{ display: displayActiveOrBlock }}
+          ariaHidden={active}
+        >
+          <DropdownListForDesktop links={links} />
         </div>
-      );
+      </li>
+    );
+  };
+
+  Object.assign(LinkWithADropDownList, {
+    props: {
+      linkTitle: {
+        type: String,
+        required: true,
+      },
+      links: { type: Array, required: true },
+      active: { type: Boolean, required: true },
+      desktopDropdownFunctionRef: { type: Function, required: true },
     },
-  },
+    emits: ["linkTitleAndActiveStateSent"],
+  });
+
+  function DropdownListForDesktop({ links }: DropdownListProps) {
+    return (
+      <ul class="bg-gray-50 rounded-3xl shadow-lg shadow-gray-400">
+        <div class="w-56">
+          {links.map((link) => (
+            <li class="capitalize px-4 py-6 hover:text-gray-500">
+              <a href={`/${replaceEmptySpaceWithADash(link)}`} class=" block ">
+                {link}
+              </a>
+            </li>
+          ))}
+        </div>
+      </ul>
+    );
+  }
+
+  function MobileDropDownList({ links, active }: MobileDropDownListProps) {
+    const displayActiveOrBlock = active ? "block" : "none";
+
+    return (
+      <ul style={{ display: displayActiveOrBlock }} aria-hidden={active}>
+        {links.map((link) => (
+          <li class="font-medium" key={link}>
+            <a href={`/${replaceEmptySpaceWithADash(link)}`}>
+              <div class="px-6 py-3">{link}</div>
+            </a>
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  Object.assign(MobileDropDownList, {
+    props: {
+      links: { type: Array, required: true },
+      active: { type: Boolean, required: true },
+    },
+  });
+
+  const ButtonWithDropDownList: FunctionalComponent<
+    ButtonWithDropDownListProps
+  > = (props, { emit }) => {
+    const { links, linkTitle, active } = props;
+
+    return (
+      <div key={linkTitle}>
+        <button
+          class="px-4 py-2 flex justify-between w-full"
+          onClick={sendLinkTitleAndActiveState(emit, linkTitle, active)}
+        >
+          <span class="text-xl capitalize font-semibold">{linkTitle}</span>
+          <DownIcon />
+        </button>
+        <MobileDropDownList {...{ links, active }} />
+      </div>
+    );
+  };
+
+  Object.assign(ButtonWithDropDownList, {
+    props: {
+      links: {
+        type: Array,
+        required: true,
+      },
+      linkTitle: {
+        type: String,
+        required: true,
+      },
+      active: {
+        type: Boolean,
+        required: true,
+      },
+    },
+    emits: ["linkTitleAndActiveStateSent"],
+  });
+
+  export function LinksWithDropdowns(
+    props: DesktopDropDownProps,
+    { emit }: Omit<SetupContext, "expose">
+  ) {
+    const { linkSets, desktopDropdownFunctionRef, ...restAttrs } = props;
+
+    const linkSetEntries = Object.entries(linkSets);
+
+    return (
+      <div {...restAttrs}>
+        <ul class="flex gap-4">
+          {linkSetEntries.map(([linkTitle, { values: links, active }]) => (
+            <LinkWithADropDownList
+              onLinkTitleAndActiveStateSent={(event: TitleAndActiveObject) =>
+                emit("linkTitleAndActiveStateSent", event)
+              }
+              linkTitle={linkTitle}
+              links={links}
+              active={active}
+              desktopDropdownFunctionRef={desktopDropdownFunctionRef}
+            />
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
+  Object.assign(LinksWithDropdowns, {
+    props: {
+      linkSets: {
+        type: Object,
+        required: true,
+      },
+      desktopDropdownFunctionRef: {
+        type: Function,
+        required: true,
+      },
+    },
+    emits: ["linkTitleAndActiveStateSent"],
+  });
+
+  export function MobileDropDown(
+    props: MobileDropDownProps,
+    { emit }: Omit<SetupContext, "expose">
+  ) {
+    const { linkSets, mobileDropdownFunctionRef } = props;
+
+    const linkSetEntries = Object.entries(linkSets);
+
+    return (
+      <div class="bg-gray-50 capitalize text-lg py-8">
+        <div class="w-4/5 grid mx-auto gap-12">
+          <div ref={mobileDropdownFunctionRef}>
+            {linkSetEntries.map(([linkTitle, { values: links, active }]) => (
+              <ButtonWithDropDownList
+                onLinkTitleAndActiveStateSent={(event: TitleAndActiveObject) =>
+                  emit("linkTitleAndActiveStateSent", event)
+                }
+                linkTitle={linkTitle}
+                links={links}
+                active={active}
+              />
+            ))}
+          </div>
+
+          <div class="transtion-opacity duration-200 ease-in hover:opacity-80">
+            <Button class="bg-purple-600 w-full text-gray-50 rounded-lg">
+              Subscribe
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  Object.assign(MobileDropDown, {
+    props: {
+      linkSets: {
+        type: Object,
+        required: true,
+      },
+      mobileDropdownFunctionRef: {
+        type: Function,
+        required: true,
+      },
+    },
+    emits: ["linkTitleAndActiveStateSent"],
+  });
+}
+
+export default {
+  components: Components,
 };
 </script>

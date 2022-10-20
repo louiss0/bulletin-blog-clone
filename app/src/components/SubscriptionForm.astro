@@ -8,36 +8,32 @@ interface Props {
 const { title, content, buttonText } = Astro.props;
 ---
 
-<div class="bg-violet-600 text-gray-50 text-center">
+<div class="text-gray-50 text-center">
   <div class="px-6 py-20">
-    <div class="grid place-items-center">
-      <div class="md:w-2/5">
-        <div class="grid place-items-center gap-10">
-          <div class="text-4xl font-bold">{title}</div>
-          <p>{content}</p>
-          <div class="flex shadow-lg shadow-violet-700">
-            <input
-              type="text"
-              placeholder="Enter your email"
-              class:list={[
-                "rounded-tl-md rounded-bl-md",
-                "placeholder-gray-500",
-                "px-2 py-3",
-                "focus:outline-2 focus:outline-violet-700",
-              ]}
-            />
-            <button
-              class:list={[
-                "rounded-tr-md rounded-br-md",
-                "bg-violet-900 hover:bg-violet-500",
-                "px-2 py-3",
-                "focus:outline-2 focus:outline-violet-500",
-              ]}
-            >
-              {buttonText}
-            </button>
-          </div>
-        </div>
+    <div class="grid place-items-center gap-10">
+      <div class="text-4xl font-bold">{title}</div>
+      <p>{content}</p>
+      <div class="flex shadow-lg shadow-violet-600">
+        <input
+          type="text"
+          placeholder="Enter your email"
+          class:list={[
+            "rounded-tl-md rounded-bl-md",
+            "placeholder-gray-500",
+            "px-2 py-3",
+            "focus:outline-2 focus:outline-violet-700",
+          ]}
+        />
+        <button
+          class:list={[
+            "rounded-tr-md rounded-br-md",
+            "bg-violet-900 hover:bg-violet-500",
+            "px-2 py-3",
+            "focus:outline-2 focus:outline-violet-500",
+          ]}
+        >
+          {buttonText}
+        </button>
       </div>
     </div>
   </div>

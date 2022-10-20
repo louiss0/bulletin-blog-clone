@@ -3,8 +3,9 @@ import Container from "@/components/Container.astro";
 import MainLayout from "@/components/MainLayout.astro";
 import PostCard from "@/components/PostCard.astro";
 import SubscriptionForm from "@/components/SubscriptionForm.astro";
+import TransitionWrapper from "@/components/TransitionWrapper.astro";
+import device from "@/images/6123fc6440d297ef079b81ce_device_000001.jpg";
 import Post from "@/types/Post";
-
 const { posts } = (await fetch(
   new URL("/src/mock-data/posts.json", Astro.url)
 ).then((response) => response.json())) as { posts: Array<Post> };
@@ -24,8 +25,10 @@ const latestFourPosts = latestPosts.slice(0, 4);
 const tenRandomPosts = posts.slice(0, 10).reduceRight((acc, _, i, array) => {
   let j = Math.floor(Math.random() * (i + 1));
 
-  const firstItem = array[i]!;
-  const secondItem = array[j]!;
+  const firstItem = array[i];
+  const secondItem = array[j];
+
+  if (!firstItem || !secondItem) return acc;
 
   acc[i] = firstItem;
   acc[j] = secondItem;
@@ -47,67 +50,92 @@ const [firstFeaturedPost, ...restofTheFeaturedPosts] = posts.filter((post) => {
 
 <MainLayout title="Home">
   <Fragment slot="header">
-    <SubscriptionForm
-      title="A blog that people will actually want to read"
-      content="People use Bulletin to share big ideas with the world on a regular basis with a focus on accessibility and usability."
-      buttonText="Try it"
-    />
-  </Fragment>
-  <Fragment slot="main">
-    <section class="grid gap-2 px-4 py-6" aria-label="featured-posts">
-      <Container>
-        <div class:list={["grid gap-2", "lg:grid-cols-2 lg:gap-12"]}>
-          {
-            (() => {
-              if (firstFeaturedPost) {
-                return (
-                  <PostCard
-                    class="h-full"
-                    headerClass={"rounded-md lg:h-3/5"}
-                    footerClass={"lg:gap-16"}
-                    title={firstFeaturedPost.title}
-                    author={firstFeaturedPost.author}
-                    image={firstFeaturedPost.image}
-                    thumbnail={firstFeaturedPost.thumbnail}
-                    pubDate={firstFeaturedPost.pubDate}
-                    tag={firstFeaturedPost.tag}
-                  />
-                );
-              }
-            })()
-          }
-          <div class="grid gap-6">
-            <h2 id="featured-posts">Featured Posts</h2>
-            <ul class="grid gap-4 divide-y-2 divide-gray-400">
-              {
-                (function* () {
-                  if (restofTheFeaturedPosts.length === 0) return;
-                  for (const featuredPost of restofTheFeaturedPosts) {
-                    yield (
-                      <li class="py-4">
-                        <PostCard
-                          class={"flex flex-row-reverse"}
-                          headerClass={"rounded-xl basis-2/5"}
-                          title={featuredPost.title}
-                          author={featuredPost.author}
-                          image={featuredPost.image}
-                          thumbnail={featuredPost.thumbnail}
-                          pubDate={featuredPost.pubDate}
-                          tag={featuredPost.tag}
-                          footerClass={"basis-3/5"}
-                        />
-                      </li>
-                    );
-                  }
-                })()
-              }
-            </ul>
+    <div class="hidden lg:block relative">
+      <div class="absolute inset-0 -z-10">
+        <img src={device} alt="Device" class="object-cover h-full w-full" />
+      </div>
+      <Container widthClass={"w-8/12"} maxWidthClass={"max-w-screen-2xl"}>
+        <div class="lg:grid lg:grid-cols-2">
+          <SubscriptionForm
+            title="A blog that people will actually want to read"
+            content="People use Bulletin to share big ideas with the world on a regular basis with a focus on accessibility and usability."
+            buttonText="Try It"
+          />
+          <div>
+            <!-- This is a fake div don't move -->
           </div>
         </div>
       </Container>
-    </section>
+    </div>
 
-    <section class="px-6 py-8" aria-labelledby="latest-posts ">
+    <div class="lg:hidden">
+      <SubscriptionForm
+        title="A blog that people will actually want to read"
+        content="People use Bulletin to share big ideas with the world on a regular basis with a focus on accessibility and usability."
+        buttonText="Try It"
+      />
+    </div>
+  </Fragment>
+
+  <Fragment slot="main">
+    <section class="grid gap-2 px-4 py-10" aria-labelledby="featured-posts">
+      <TransitionWrapper>
+        <Container>
+          <div class:list={["grid gap-2", "lg:grid-cols-2 lg:gap-12"]}>
+            {
+              (() => {
+                if (firstFeaturedPost) {
+                  return (
+                    <PostCard
+                      class="h-full"
+                      headerClass={"rounded-md lg:h-3/5"}
+                      footerClass={"lg:gap-16"}
+                      title={firstFeaturedPost.title}
+                      author={firstFeaturedPost.author}
+                      image={firstFeaturedPost.image}
+                      thumbnail={firstFeaturedPost.thumbnail}
+                      pubDate={firstFeaturedPost.pubDate}
+                      tag={firstFeaturedPost.tag}
+                    />
+                  );
+                }
+              })()
+            }
+            <div class="grid gap-6">
+              <h2 id="featured-posts">Featured Posts</h2>
+              <ul class="grid gap-4 divide-y-2 divide-gray-400">
+                {
+                  (function* () {
+                    if (restofTheFeaturedPosts.length === 0) return;
+                    for (const featuredPost of restofTheFeaturedPosts) {
+                      yield (
+                        <li class="py-4">
+                          <PostCard
+                            class={"flex flex-row-reverse"}
+                            headerClass={"rounded-xl basis-2/5"}
+                            title={featuredPost.title}
+                            author={featuredPost.author}
+                            image={featuredPost.image}
+                            thumbnail={featuredPost.thumbnail}
+                            pubDate={featuredPost.pubDate}
+                            tag={featuredPost.tag}
+                            footerClass={"basis-3/5"}
+                          />
+                        </li>
+                      );
+                    }
+                  })()
+                }
+              </ul>
+            </div>
+          </div>
+        </Container>
+      </TransitionWrapper>
+    </section>
+  </Fragment>
+
+  <section class="px-6 py-8" aria-labelledby="latest-posts ">
+    <TransitionWrapper>
       <Container maxWidthClass={"max-w-screen-xl"}>
         <div class="grid gap-6">
           <h2 id="latest-posts">Latest Posts</h2>
@@ -139,9 +167,11 @@ const [firstFeaturedPost, ...restofTheFeaturedPosts] = posts.filter((post) => {
           </ul>
         </div>
       </Container>
-    </section>
+    </TransitionWrapper>
+  </section>
 
-    <section class="grid gap-4 px-4 py-6" aria-labelledby="more-posts">
+  <section class="grid gap-4 px-4 py-6" aria-labelledby="more-posts">
+    <TransitionWrapper>
       <Container>
         <div class="grid gap-12">
           <h2 id="more-posts">More Posts</h2>
@@ -172,6 +202,6 @@ const [firstFeaturedPost, ...restofTheFeaturedPosts] = posts.filter((post) => {
           </ul>
         </div>
       </Container>
-    </section>
-  </Fragment>
+    </TransitionWrapper>
+  </section>
 </MainLayout>

@@ -24,6 +24,41 @@ const socialMediaLinks = ["twitter", "instagram", "facebook"];
 const { title } = Astro.props;
 ---
 
+<script is:inline>
+  const classUsedToHideElement = "opacity-0";
+  const nameOfDataLayerUsedForTransition = "transition-wrapper";
+
+  const sectionsObserver = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target
+            .querySelector(`[data-layer=${nameOfDataLayerUsedForTransition}]`)
+            .classList.remove(classUsedToHideElement);
+
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    {
+      threshold: 0.2,
+    }
+  );
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const sections = document.querySelectorAll("section[aria-labelledby]");
+
+    Array.from(sections)
+      .map((section) => {
+        section
+          .querySelector(`[data-layer=${nameOfDataLayerUsedForTransition}]`)
+          .classList.add(classUsedToHideElement);
+        return section;
+      })
+      .forEach((section) => sectionsObserver.observe(section));
+  });
+</script>
+
 <HMFLayout title={title}>
   <Fragment slot="header">
     <slot name="header" />
@@ -31,11 +66,15 @@ const { title } = Astro.props;
 
   <Fragment slot="main">
     <slot name="main" />
-    <SubscriptionForm
-      title="Get our weekly email"
-      content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum et lacus varius, dapibus leo eget."
-      buttonText="Sign Up"
-    />
+    <section class="bg-violet-600">
+      <div class="w-1/2 mx-auto">
+        <SubscriptionForm
+          title="Get our weekly email"
+          content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum et lacus varius, dapibus leo eget."
+          buttonText="Sign Up"
+        />
+      </div>
+    </section>
   </Fragment>
 
   <div class="py-20" slot="footer">
