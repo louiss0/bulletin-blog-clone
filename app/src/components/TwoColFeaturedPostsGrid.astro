@@ -1,0 +1,70 @@
+---
+import Post from "@/types/Post";
+import PostCard from "./PostCard.astro";
+
+interface Props {
+  posts: Array<Post>;
+}
+
+const { posts } = Astro.props;
+
+const postTags: Array<string> = [];
+
+const [firstFeaturedPost, ...restofTheFeaturedPosts] = posts.filter((post) => {
+  if (!postTags.includes(post.tag)) {
+    postTags.push(post.tag);
+
+    return post;
+  }
+  return;
+});
+---
+
+<div class="grid gap-2 lg:grid-cols-2 lg:gap-12">
+  {
+    (() => {
+      if (firstFeaturedPost) {
+        return (
+          <PostCard
+            class="h-full"
+            headerClass={"rounded-md lg:h-3/5"}
+            footerClass={"lg:gap-16"}
+            title={firstFeaturedPost.title}
+            author={firstFeaturedPost.author}
+            image={firstFeaturedPost.image}
+            thumbnail={firstFeaturedPost.thumbnail}
+            pubDate={firstFeaturedPost.pubDate}
+            tag={firstFeaturedPost.tag}
+          />
+        );
+      }
+    })()
+  }
+  <div class="grid gap-6">
+    <h2 id="featured-posts">Featured Posts</h2>
+    <ul class="grid gap-4 divide-y-2 divide-gray-400">
+      {
+        (function* () {
+          if (restofTheFeaturedPosts.length === 0) return;
+          for (const featuredPost of restofTheFeaturedPosts) {
+            yield (
+              <li class="py-4">
+                <PostCard
+                  class={"flex flex-row-reverse"}
+                  headerClass={"rounded-xl basis-2/5"}
+                  title={featuredPost.title}
+                  author={featuredPost.author}
+                  image={featuredPost.image}
+                  thumbnail={featuredPost.thumbnail}
+                  pubDate={featuredPost.pubDate}
+                  tag={featuredPost.tag}
+                  footerClass={"basis-3/5"}
+                />
+              </li>
+            );
+          }
+        })()
+      }
+    </ul>
+  </div>
+</div>
