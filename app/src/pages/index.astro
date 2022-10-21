@@ -5,20 +5,11 @@ import PostCard from "@/components/PostCard.astro";
 import SubscriptionForm from "@/components/SubscriptionForm.astro";
 import TransitionWrapper from "@/components/TransitionWrapper.astro";
 import device from "@/images/6123fc6440d297ef079b81ce_device_000001.jpg";
-import Post from "@/types/Post";
-const { posts } = (await fetch(
-  new URL("/src/mock-data/posts.json", Astro.url)
-).then((response) => response.json())) as { posts: Array<Post> };
+import PostService from "@/services/PostService";
 
-const subtractPrevPostDateTimestampFromNextPostDateTimestamp = (
-  prevPost: Post,
-  nextPost: Post
-) =>
-  new Date(nextPost.pubDate).getTime() - new Date(prevPost.pubDate).getTime();
+const posts = await new PostService(Astro.url.href).getPosts();
 
-const latestPosts = [...posts].sort(
-  subtractPrevPostDateTimestampFromNextPostDateTimestamp
-);
+const latestPosts = [...posts];
 
 const latestFourPosts = latestPosts.slice(0, 4);
 
@@ -132,76 +123,76 @@ const [firstFeaturedPost, ...restofTheFeaturedPosts] = posts.filter((post) => {
         </Container>
       </TransitionWrapper>
     </section>
+
+    <section class="px-6 py-8" aria-labelledby="latest-posts">
+      <TransitionWrapper>
+        <Container maxWidthClass={"max-w-screen-xl"}>
+          <div class="grid gap-6">
+            <h2 id="latest-posts">Latest Posts</h2>
+            <ul class="grid gap-4 lg:flex">
+              {
+                (function* () {
+                  if (latestFourPosts.length === 0) return;
+                  for (const latestPost of latestFourPosts) {
+                    yield (
+                      <li class="flex-1">
+                        <PostCard
+                          class={"h-full"}
+                          headerClass={"rounded-2xl"}
+                          footerClass={"px-2 py-4"}
+                          title={latestPost.title}
+                          image={latestPost.image}
+                          thumbnail={latestPost.thumbnail}
+                          author={latestPost.author}
+                          pubDate={latestPost.pubDate}
+                          tag={latestPost.tag}
+                          title={latestPost.title}
+                          footerClass={"w-full"}
+                        />
+                      </li>
+                    );
+                  }
+                })()
+              }
+            </ul>
+          </div>
+        </Container>
+      </TransitionWrapper>
+    </section>
+
+    <section class="grid gap-4 px-4 py-6" aria-labelledby="more-posts">
+      <TransitionWrapper>
+        <Container>
+          <div class="grid gap-12">
+            <h2 id="more-posts">More Posts</h2>
+            <ul class="grid gap-4 lg:grid-cols-2 lg:grid-rows-5">
+              {
+                (function* () {
+                  if (tenRandomPosts.length === 0) return;
+                  for (const randomPost of tenRandomPosts) {
+                    yield (
+                      <li>
+                        <PostCard
+                          class={"lg:flex gap-4"}
+                          headerClass={"rounded-2xl basis-2/5"}
+                          title={randomPost.title}
+                          image={randomPost.image}
+                          thumbnail={randomPost.thumbnail}
+                          author={randomPost.author}
+                          pubDate={randomPost.pubDate}
+                          tag={randomPost.tag}
+                          title={randomPost.title}
+                          footerClass={"basis-3/5"}
+                        />
+                      </li>
+                    );
+                  }
+                })()
+              }
+            </ul>
+          </div>
+        </Container>
+      </TransitionWrapper>
+    </section>
   </Fragment>
-
-  <section class="px-6 py-8" aria-labelledby="latest-posts ">
-    <TransitionWrapper>
-      <Container maxWidthClass={"max-w-screen-xl"}>
-        <div class="grid gap-6">
-          <h2 id="latest-posts">Latest Posts</h2>
-          <ul class="grid gap-4 lg:flex">
-            {
-              (function* () {
-                if (latestFourPosts.length === 0) return;
-                for (const latestPost of latestFourPosts) {
-                  yield (
-                    <li class="flex-1">
-                      <PostCard
-                        class={"h-full"}
-                        headerClass={"rounded-2xl"}
-                        footerClass={"px-2 py-4"}
-                        title={latestPost.title}
-                        image={latestPost.image}
-                        thumbnail={latestPost.thumbnail}
-                        author={latestPost.author}
-                        pubDate={latestPost.pubDate}
-                        tag={latestPost.tag}
-                        title={latestPost.title}
-                        footerClass={"w-full"}
-                      />
-                    </li>
-                  );
-                }
-              })()
-            }
-          </ul>
-        </div>
-      </Container>
-    </TransitionWrapper>
-  </section>
-
-  <section class="grid gap-4 px-4 py-6" aria-labelledby="more-posts">
-    <TransitionWrapper>
-      <Container>
-        <div class="grid gap-12">
-          <h2 id="more-posts">More Posts</h2>
-          <ul class="grid gap-4 lg:grid-cols-2 lg:grid-rows-5">
-            {
-              (function* () {
-                if (tenRandomPosts.length === 0) return;
-                for (const randomPost of tenRandomPosts) {
-                  yield (
-                    <li>
-                      <PostCard
-                        class={"lg:flex gap-4"}
-                        headerClass={"rounded-2xl basis-2/5"}
-                        title={randomPost.title}
-                        image={randomPost.image}
-                        thumbnail={randomPost.thumbnail}
-                        author={randomPost.author}
-                        pubDate={randomPost.pubDate}
-                        tag={randomPost.tag}
-                        title={randomPost.title}
-                        footerClass={"basis-3/5"}
-                      />
-                    </li>
-                  );
-                }
-              })()
-            }
-          </ul>
-        </div>
-      </Container>
-    </TransitionWrapper>
-  </section>
 </MainLayout>

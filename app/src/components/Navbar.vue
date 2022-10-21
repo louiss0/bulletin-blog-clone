@@ -85,7 +85,7 @@ function resetAllActiveStatesToFalse() {
                   "
                 />
                 <Button
-                  class="text-md text-gray-50 rounded-md bg-purple-700"
+                  class="text-md text-gray-50 rounded-md bg-violet-700"
                   size="sm"
                 >
                   Subscribe
@@ -101,7 +101,7 @@ function resetAllActiveStatesToFalse() {
         </div>
       </div>
 
-      <div class="absolute w-full top-full z-10">
+      <div class="absolute w-full top-full z-30">
         <div class="lg:hidden">
           <Transition
             enter-from-class="-translate-y-full opacity-0"
@@ -215,7 +215,7 @@ namespace Components {
         </button>
 
         <div
-          class="absolute top-full"
+          class="absolute top-full z-20"
           ref={desktopDropdownFunctionRef}
           style={{ display: displayActiveOrBlock }}
           ariaHidden={active}
@@ -381,7 +381,7 @@ namespace Components {
           </div>
 
           <div class="transtion-opacity duration-200 ease-in hover:opacity-80">
-            <Button class="bg-purple-600 w-full text-gray-50 rounded-lg">
+            <Button class="bg-violet-600 w-full text-gray-50 rounded-lg">
               Subscribe
             </Button>
           </div>
