@@ -1,0 +1,39 @@
+---
+import Container from "@/components/Container.astro";
+import MainLayout from "@/components/MainLayout.astro";
+import RandomSellingPoints from "@/components/RandomSellingPoints.astro";
+import SubscriptionForm from "@/components/SubscriptionForm.astro";
+import TransitionWrapper from "@/components/TransitionWrapper.astro";
+---
+
+<MainLayout title="About">
+  <Fragment slot="header">
+    <div class="grid gap-6 py-6">
+      <div class="grid place-items-center gap-8">
+        <h1>About Bulletin</h1>
+        <p class="text-xl">
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum et
+          lacus varius, dapibus leo eget, semper metus. Suspendisse egestas est
+          mi.
+        </p>
+      </div>
+      <div class="bg-violet-600 lg:rounded-lg lg:w-3/5 lg:mx-auto">
+        <SubscriptionForm
+          title="Get our weekly email"
+          content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum et lacus varius, dapibus leo eget."
+          buttonText="Sign Up"
+        />
+      </div>
+    </div>
+  </Fragment>
+
+  <Fragment slot="main">
+    <section class="px-4 py-8" aria-labelledby="selling-points">
+      <TransitionWrapper>
+        <Container>
+          <RandomSellingPoints />
+        </Container>
+      </TransitionWrapper>
+    </section>
+  </Fragment>
+</MainLayout>
