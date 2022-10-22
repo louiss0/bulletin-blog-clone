@@ -1,0 +1,68 @@
+---
+import Button from "@/components/Button.vue";
+import Container from "@/components/Container.astro";
+import DeskGuyWithTestimonialOnTheRight from "@/components/DeskGuyWithTestimonialOnTheRight.astro";
+import MainLayout from "@/components/MainLayout.astro";
+import RandomSellingPoints from "@/components/RandomSellingPoints.astro";
+import TransitionWrapper from "@/components/TransitionWrapper.astro";
+import TwoColFeaturedPostsGrid from "@/components/TwoColFeaturedPostsGrid.astro";
+import PostService from "@/services/PostService";
+const posts = await new PostService(Astro.url.href).getPosts();
+---
+
+<MainLayout title="Landing page Three">
+  <Fragment slot="header">
+    <div class="bg-violet-600 text-gray-50 px-4 py-16">
+      <Container>
+        <div class="lg:w-3/5 lg:mx-auto">
+          <div class="text-center grid place-items-center gap-10">
+            <h1>Landing Page 4</h1>
+            <p class="max-w-35">
+              People use Bulletin to share big ideas with the world on a regular
+              basis with a focus on accessibility and usability.
+            </p>
+            <Button class="rounded-md bg-violet-800">Sign up now!</Button>
+          </div>
+        </div>
+      </Container>
+    </div>
+
+    <img
+      src="/src/images/612bd9d837852f6e209dc4a1_luca-bravo-XJXWbfSo2f0-unsplash (1).jpg"
+      alt="Computer Image with ramdom code"
+    />
+  </Fragment>
+
+  <Fragment slot="main">
+    <section class="px-4 py-16" aria-labelledby="selling-points">
+      <TransitionWrapper>
+        <RandomSellingPoints />
+      </TransitionWrapper>
+    </section>
+    <section class="px-4 py-8">
+      <DeskGuyWithTestimonialOnTheRight />
+    </section>
+    <section aria-labelledby="from-the-blog">
+      <TransitionWrapper>
+        <Container>
+          <div class="grid gap-12">
+            <div class="grid gap-8">
+              <h2 id="from-the-blog">From the blog</h2><p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Vestibulum et lacus varius, dapibus leo eget, semper metus.
+                Suspendisse egestas est mi.
+              </p>
+            </div>
+          </div>
+        </Container>
+      </TransitionWrapper>
+    </section>
+    <section class="px-6 py-20" aria-labelledby="featured-posts">
+      <TransitionWrapper>
+        <Container>
+          <TwoColFeaturedPostsGrid posts={posts} />
+        </Container>
+      </TransitionWrapper>
+    </section>
+  </Fragment>
+</MainLayout>

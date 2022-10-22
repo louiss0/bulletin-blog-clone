@@ -1,24 +1,26 @@
-<script is:inline>
-  const transitionWrapper = document.querySelector(
-    "[data-layer='transition-wrapper']"
-  );
-
-  if (transitionWrapper) {
-    const transitionWrapperParentElement_sTagNameEqualsToSection =
-      transitionWrapper.parentElement?.tagName === "section";
-
-    if (!transitionWrapperParentElement_sTagNameEqualsToSection) {
-      transitionWrapper.innerHTML = `<div class='text-red-700 text-2xl'> 
-          This element is supposed to only be used as a wrapper for an element inside of a section 
-      </div> 
-      `;
-    }
-  }
-</script>
-
 <div
   class="transition-opacity duration-200 ease-in"
   data-layer="transition-wrapper"
 >
   <slot />
 </div>
+
+<script>
+  {
+    const transitionWrappers = document.querySelectorAll(
+      "[data-layer='transition-wrapper']"
+    );
+
+    transitionWrappers.forEach((transitionWrapper) => {
+      const transitionWrapperParentElement_sTagNameEqualsToSection =
+        transitionWrapper.parentElement?.tagName === "SECTION";
+
+      if (!transitionWrapperParentElement_sTagNameEqualsToSection) {
+        transitionWrapper.innerHTML = `<div class='text-red-700 text-2xl'> 
+          This element is supposed to only be used as a wrapper for an element inside of a section 
+          </div> 
+          `;
+      }
+    });
+  }
+</script>

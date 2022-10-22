@@ -51,7 +51,7 @@ const { title } = Astro.props;
     Array.from(sections)
       .map((section) => {
         section
-          ?.querySelector(`[data-layer=${nameOfDataLayerUsedForTransition}]`)
+          .querySelector(`[data-layer=${nameOfDataLayerUsedForTransition}]`)
           ?.classList.add(classUsedToHideElement);
         return section;
       })

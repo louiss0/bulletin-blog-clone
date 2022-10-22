@@ -1,0 +1,65 @@
+---
+import Button from "@/components/Button.vue";
+import Container from "@/components/Container.astro";
+import DeskGuyWithTestimonialOnTheRight from "@/components/DeskGuyWithTestimonialOnTheRight.astro";
+import MainLayout from "@/components/MainLayout.astro";
+import RandomSellingPoints from "@/components/RandomSellingPoints.astro";
+import TransitionWrapper from "@/components/TransitionWrapper.astro";
+import TwoColFeaturedPostsGrid from "@/components/TwoColFeaturedPostsGrid.astro";
+import PostService from "@/services/PostService";
+const posts = await new PostService(Astro.url.href).getPosts();
+---
+
+<MainLayout title="Landing page Three">
+  <Fragment slot="header">
+    <div class="bg-violet-600 text-gray-50 px-4 py-16">
+      <div class="text-center">
+        <Container>
+          <div class="lg:w-4/5 lg:mx-auto">
+            <div class="grid place-items-center gap-12">
+              <h1>Need a great blog template?</h1>
+              <p>
+                People use Bulletin to share big ideas with the world on a
+                regular basis with a focus on accessibility and usability.
+              </p>
+              <Button size={"md"} class="rounded-md bg-violet-800"
+                >Learn more</Button
+              >
+            </div>
+          </div>
+        </Container>
+      </div>
+    </div>
+  </Fragment>
+  <Fragment slot="main">
+    <section class="px-4 py-16" aria-labelledby="selling-points">
+      <TransitionWrapper>
+        <Container>
+          <RandomSellingPoints />
+        </Container>
+      </TransitionWrapper>
+    </section>
+    <section class="px-4 py-8">
+      <DeskGuyWithTestimonialOnTheRight />
+    </section>
+    <section aria-labelledby="from-the-blog">
+      <Container>
+        <div class="grid gap-12">
+          <div class="grid place-items-center gap-8">
+            <h2 id="from-the-blog">From the blog</h2>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Vestibulum et lacus varius, dapibus leo eget, semper metus.
+              Suspendisse egestas est mi.
+            </p>
+          </div>
+        </div>
+      </Container>
+    </section>
+    <section class="px-6 py-20" aria-labelledby="featured-posts">
+      <Container>
+        <TwoColFeaturedPostsGrid posts={posts} />
+      </Container>
+    </section>
+  </Fragment>
+</MainLayout>

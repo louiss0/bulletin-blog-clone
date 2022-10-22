@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { useAttrs, computed } from "vue";
+import { useAttrs, computed, HTMLAttributes } from "vue";
 
-interface Props {
+interface Props extends HTMLAttributes {
   href?: string;
   size?: "xs" | "sm" | "md" | "lg" | "xl";
 }
