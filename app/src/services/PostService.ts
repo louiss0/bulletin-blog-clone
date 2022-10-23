@@ -32,7 +32,7 @@ export default class PostService {
     async getPosts() {
 
         const { posts } = (await fetch(`${import.meta.url}/src/mock-data/posts.json`).then((response) => response.json())) as {
-  posts: Array<Post>;
+            posts: Array<Post>;
     };
 
         return posts
