@@ -1,5 +1,6 @@
 ---
 import Post from "@/types/Post";
+import { replaceEmptySpaceWithADash } from "@/utils";
 
 type OptionalProps = Partial<
   Record<"class" | "headerClass" | "footerClass", string>
@@ -21,7 +22,10 @@ const {
 const alteredDate = new Date(pubDate).toLocaleString();
 ---
 
-<div class={$class}>
+<a
+  class={$class}
+  href={`/blog/${replaceEmptySpaceWithADash(title.toLowerCase())}`}
+>
   <header class={headerClass}>
     <img
       alt=""
@@ -44,7 +48,7 @@ const alteredDate = new Date(pubDate).toLocaleString();
       <time class="text-sm flex" datetime={alteredDate}>{pubDate}</time>
     </div>
   </footer>
-</div>
+</a>
 
 <script define:vars={{ thumbnail, url: Astro.url, numberId }}>
   const thumbnailWrapper = new Image();

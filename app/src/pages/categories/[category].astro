@@ -13,7 +13,9 @@ export async function getStaticPaths() {
     "travel",
   ];
 
-  const allPosts = await new PostService("http://localhost:3000").getPosts();
+  const allPosts = await new PostService(
+    import.meta.env.VITE_SITE_HOST
+  ).getPosts();
 
   return categories.map((category) => {
     return {

@@ -8,7 +8,7 @@ export default class PostService {
     #url:string
 
  
-    private static subtractPrevPostDateTimestampFromNextPostDateTimestamp(prevPost: Post,
+     private static subtractPrevPostDateTimestampFromNextPostDateTimestamp(prevPost: Post,
         nextPost: Post) {
         
   
@@ -26,6 +26,11 @@ export default class PostService {
     }
     
  
+    async getLatestPosts() {
+
+        return (await this.getPosts()).sort(PostService.subtractPrevPostDateTimestampFromNextPostDateTimestamp)
+
+    }
 
     async getPosts() {
 
@@ -33,7 +38,7 @@ export default class PostService {
   posts: Array<Post>;
     };
 
-        return posts.sort(PostService.subtractPrevPostDateTimestampFromNextPostDateTimestamp)
+        return posts
 
     }
 

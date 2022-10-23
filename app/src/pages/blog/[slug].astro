@@ -1,0 +1,89 @@
+---
+import Container from "@/components/Container.astro";
+import MainLayout from "@/components/MainLayout.astro";
+import PostService from "@/services/PostService";
+import { replaceEmptySpaceWithADash } from "@/utils";
+
+type Props = Awaited<ReturnType<typeof getStaticPaths>>[number]["props"];
+
+export async function getStaticPaths() {
+  const allPosts = await new PostService(
+    import.meta.env.VITE_SITE_HOST
+  ).getPosts();
+
+  return allPosts.map((post) => ({
+    params: {
+      slug: replaceEmptySpaceWithADash(post.title.toLowerCase()),
+    },
+    props: {
+      post,
+    },
+  }));
+}
+
+const { post } = Astro.props;
+
+const { author, authorImage, pubDate, tag, thumbnail, content, title } = post;
+---
+
+<MainLayout title={title}>
+  <Fragment slot="header">
+    <Container>
+      <figure>
+        <div class="grid gap-2">
+          <div class="py-2 px-4">
+            <div class="flex gap-4 items-center text-lg">
+              <div class="text-violet-600 uppercase">{tag}</div>
+              <div class="rounded-full bg-gray-500 w-2 h-2">
+                <!-- This is a circle -->
+              </div>
+              <time
+                class="text-gray-500"
+                datetime={new Date(pubDate).toLocaleString()}>{pubDate}</time
+              >
+            </div>
+          </div>
+          <h1 class="py-2 px-4">{title}</h1>
+          <div class="py-2 px-4">
+            <div class="flex gap-2 items-center">
+              <div class="w-16">
+                <img src={authorImage} alt={author} class="rounded-full" />
+              </div>
+              <span class="uppercase text-base">{author}</span>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </Container>
+  </Fragment>
+
+  <Fragment slot="main">
+    <Container>
+      <figure>
+        <img src={thumbnail} alt="" class="h-[25rem] w-full" />
+      </figure>
+
+      <article>
+        <Fragment set:html={content} />
+      </article>
+    </Container>
+  </Fragment>
+</MainLayout>
+
+<style lang="postcss">
+  article {
+    @apply py-20;
+  }
+  article > :global(blockquote) {
+    @apply px-8 py-4 leading-relaxed;
+    @apply border-l-2 border-gray-800 border-solid;
+  }
+
+  article > :global(p) {
+    @apply px-2 py-3;
+  }
+
+  article > :global(h1, h2) {
+    @apply py-4;
+  }
+</style>

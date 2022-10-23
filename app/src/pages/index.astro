@@ -8,25 +8,25 @@ import TwoColFeaturedPostsGrid from "@/components/TwoColFeaturedPostsGrid.astro"
 import device from "@/images/6123fc6440d297ef079b81ce_device_000001.jpg";
 import PostService from "@/services/PostService";
 
-const posts = await new PostService(Astro.url.href).getPosts();
-
-const latestPosts = [...posts];
+const latestPosts = await new PostService(Astro.url.href).getLatestPosts();
 
 const latestFourPosts = latestPosts.slice(0, 4);
 
-const tenRandomPosts = posts.slice(0, 10).reduceRight((acc, _, i, array) => {
-  let j = Math.floor(Math.random() * (i + 1));
+const tenRandomPosts = latestPosts
+  .slice(0, 10)
+  .reduceRight((acc, _, i, array) => {
+    let j = Math.floor(Math.random() * (i + 1));
 
-  const firstItem = array[i];
-  const secondItem = array[j];
+    const firstItem = array[i];
+    const secondItem = array[j];
 
-  if (!firstItem || !secondItem) return acc;
+    if (!firstItem || !secondItem) return acc;
 
-  acc[i] = firstItem;
-  acc[j] = secondItem;
+    acc[i] = firstItem;
+    acc[j] = secondItem;
 
-  return acc;
-}, [] as typeof posts);
+    return acc;
+  }, [] as typeof latestPosts);
 ---
 
 <MainLayout title="Home">
@@ -62,7 +62,7 @@ const tenRandomPosts = posts.slice(0, 10).reduceRight((acc, _, i, array) => {
     <section class="grid gap-2 px-4 py-10" aria-labelledby="featured-posts">
       <TransitionWrapper>
         <Container>
-          <TwoColFeaturedPostsGrid posts={posts} />
+          <TwoColFeaturedPostsGrid posts={latestPosts} />
         </Container>
       </TransitionWrapper>
     </section>
