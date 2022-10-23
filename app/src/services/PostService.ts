@@ -31,7 +31,7 @@ export default class PostService {
 
     async getPosts() {
 
-        const { posts } = (await fetch(`${import.meta.env.VITE_SITE_HOST}/src/mock-data/posts.json`).then((response) => response.json())) as {
+        const { posts } = (await fetch(`${import.meta.url}/src/mock-data/posts.json`).then((response) => response.json())) as {
   posts: Array<Post>;
     };
 
