@@ -8,12 +8,15 @@ import TwoColFeaturedPostsGrid from "@/components/TwoColFeaturedPostsGrid.astro"
 import device from "@/images/6123fc6440d297ef079b81ce_device_000001.jpg";
 import PostService from "@/services/PostService";
 
-const latestPosts = await new PostService().getLatestPosts();
+const latestPosts = await new PostService()
+  .getLatestPosts()
+  .then((posts) => posts)
+  .catch(console.error);
 
-const latestFourPosts = latestPosts.slice(0, 4);
+const latestFourPosts = latestPosts?.slice(0, 4);
 
 const tenRandomPosts = latestPosts
-  .slice(0, 10)
+  ?.slice(0, 10)
   .reduceRight((acc, _, i, array) => {
     let j = Math.floor(Math.random() * (i + 1));
 
@@ -64,7 +67,7 @@ const tenRandomPosts = latestPosts
     <section class="grid gap-2 px-4 py-10" aria-labelledby="featured-posts">
       <TransitionWrapper>
         <Container>
-          <TwoColFeaturedPostsGrid posts={latestPosts} />
+          <TwoColFeaturedPostsGrid posts={latestPosts ? latestPosts : []} />
         </Container>
       </TransitionWrapper>
     </section>
@@ -77,7 +80,7 @@ const tenRandomPosts = latestPosts
             <ul class="grid gap-4 lg:flex">
               {
                 (function* () {
-                  if (latestFourPosts.length === 0) return;
+                  if (latestFourPosts?.length === 0 || !latestFourPosts) return;
                   for (const latestPost of latestFourPosts) {
                     yield (
                       <li class="flex-1">
@@ -113,7 +116,7 @@ const tenRandomPosts = latestPosts
             <ul class="grid gap-4 lg:grid-cols-2 lg:grid-rows-5">
               {
                 (function* () {
-                  if (tenRandomPosts.length === 0) return;
+                  if (tenRandomPosts?.length === 0 || !tenRandomPosts) return;
                   for (const randomPost of tenRandomPosts) {
                     yield (
                       <li>
