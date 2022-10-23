@@ -8,10 +8,7 @@ import TwoColFeaturedPostsGrid from "@/components/TwoColFeaturedPostsGrid.astro"
 import device from "@/images/6123fc6440d297ef079b81ce_device_000001.jpg";
 import PostService from "@/services/PostService";
 
-const latestPosts = await new PostService()
-  .getLatestPosts()
-  .then((posts) => posts)
-  .catch(console.error);
+const latestPosts = await new PostService().getLatestPosts();
 
 const latestFourPosts = latestPosts?.slice(0, 4);
 
