@@ -6,7 +6,9 @@ import SubscriptionForm from "@/components/SubscriptionForm.astro";
 import TransitionWrapper from "@/components/TransitionWrapper.astro";
 import PostService from "@/services/PostService";
 import TwoColFeaturedPostsGrid from "@/components/TwoColFeaturedPostsGrid.astro";
-const posts = await new PostService(import\.meta.env\.VITE_SITE_HOST).getLatestPosts();
+const posts = await new PostService(
+  import.meta.env.VITE_SITE_HOST
+).getLatestPosts();
 ---
 
 <MainLayout title="Landing Page Two">
