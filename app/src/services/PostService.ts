@@ -5,7 +5,7 @@ export default class PostService {
 
 
     
-    #url:string
+    // #url:string
 
  
      private static subtractPrevPostDateTimestampFromNextPostDateTimestamp(prevPost: Post,
@@ -16,12 +16,9 @@ export default class PostService {
 
   }
     
-        
-
-
-        constructor(secondHalfOfUrl:string, ) {
+        constructor( ) {
             
-        this.#url=  new URL("/src/mock-data/posts.json", secondHalfOfUrl).href
+        // this.#url=  new URL(, secondHalfOfUrl).href
 
     }
     
@@ -34,7 +31,7 @@ export default class PostService {
 
     async getPosts() {
 
-        const { posts } = (await fetch(this.#url).then((response) => response.json())) as {
+        const { posts } = (await fetch(`${import.meta.env.VITE_SITE_HOST}/src/mock-data/posts.json`).then((response) => response.json())) as {
   posts: Array<Post>;
     };
 
