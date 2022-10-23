@@ -144,11 +144,6 @@ type MobileDropDownProps = DropDownProps &
 type DesktopDropDownProps = DropDownProps &
   Record<"desktopDropdownFunctionRef", FunctionRef>;
 
-type MobileDropDownListProps = Omit<
-  TitleAndActiveObject & DropdownListProps,
-  "linkTitle"
->;
-
 function sendLinkTitleAndActiveState(
   emit: SetupContext["emit"],
   linkTitle: string,
@@ -160,7 +155,7 @@ function sendLinkTitleAndActiveState(
       active: !active,
     });
 }
-type DropdownListProps = { links: Array<string> };
+type DropdownListProps = { links: Array<string>; linkTitle: string };
 type TitleAndActiveObject = {
   linkTitle: string;
   active: boolean;
@@ -220,7 +215,7 @@ namespace Components {
           style={{ display: displayActiveOrBlock }}
           ariaHidden={active}
         >
-          <DropdownListForDesktop links={links} />
+          <DropdownListForDesktop {...{ links, linkTitle }} />
         </div>
       </li>
     );
@@ -239,49 +234,35 @@ namespace Components {
     emits: ["linkTitleAndActiveStateSent"],
   });
 
-  function DropdownListForDesktop({ links }: DropdownListProps) {
+  function DropdownListForDesktop({ links, linkTitle }: DropdownListProps) {
+    const linkeTitleEqualsCategoriesReturnEmptyStringElseReturnLinkTitle =
+      linkTitle === "categories" ? `${linkTitle}/` : "";
+
     return (
-      <ul class="bg-gray-50 rounded-3xl shadow-lg shadow-gray-400">
-        <div class="w-56">
+      <div class="w-56">
+        <ul class="bg-gray-50 rounded-3xl shadow-lg shadow-gray-400">
           {links.map((link) => (
             <li class="capitalize px-4 py-6 hover:text-gray-500">
-              <a href={`/${replaceEmptySpaceWithADash(link)}`} class=" block ">
+              <a
+                href={`/${linkeTitleEqualsCategoriesReturnEmptyStringElseReturnLinkTitle}${replaceEmptySpaceWithADash(
+                  link
+                )}`}
+                class=" block "
+              >
                 {link}
               </a>
             </li>
           ))}
-        </div>
-      </ul>
+        </ul>
+      </div>
     );
   }
-
-  function MobileDropDownList({ links, active }: MobileDropDownListProps) {
-    const displayActiveOrBlock = active ? "block" : "none";
-
-    return (
-      <ul style={{ display: displayActiveOrBlock }} aria-hidden={active}>
-        {links.map((link) => (
-          <li class="font-medium" key={link}>
-            <a href={`/${replaceEmptySpaceWithADash(link)}`}>
-              <div class="px-6 py-3">{link}</div>
-            </a>
-          </li>
-        ))}
-      </ul>
-    );
-  }
-
-  Object.assign(MobileDropDownList, {
-    props: {
-      links: { type: Array, required: true },
-      active: { type: Boolean, required: true },
-    },
-  });
 
   const ButtonWithDropDownList: FunctionalComponent<
     ButtonWithDropDownListProps
   > = (props, { emit }) => {
     const { links, linkTitle, active } = props;
+    const displayActiveOrBlock = active ? "block" : "none";
 
     return (
       <div key={linkTitle}>
@@ -292,7 +273,12 @@ namespace Components {
           <span class="text-xl capitalize font-semibold">{linkTitle}</span>
           <DownIcon />
         </button>
-        <MobileDropDownList {...{ links, active }} />
+        <div
+          style={{ display: displayActiveOrBlock }}
+          ariaHidden={displayActiveOrBlock}
+        >
+          <MobileDropDownList {...{ links, linkTitle }} />
+        </div>
       </div>
     );
   };
@@ -313,6 +299,34 @@ namespace Components {
       },
     },
     emits: ["linkTitleAndActiveStateSent"],
+  });
+
+  function MobileDropDownList({ links, linkTitle }: DropdownListProps) {
+    const linkeTitleEqualsCategoriesReturnEmptyStringElseReturnLinkTitle =
+      linkTitle === "categories" ? linkTitle : "";
+
+    return (
+      <ul>
+        {links.map((link) => (
+          <li class="font-medium" key={link}>
+            <a
+              href={`/${linkeTitleEqualsCategoriesReturnEmptyStringElseReturnLinkTitle}}${replaceEmptySpaceWithADash(
+                link
+              )}`}
+            >
+              <div class="px-6 py-3">{link}</div>
+            </a>
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  Object.assign(MobileDropDownList, {
+    props: {
+      links: { type: Array, required: true },
+      linkTitle: { type: String, required: true },
+    },
   });
 
   export function LinksWithDropdowns(

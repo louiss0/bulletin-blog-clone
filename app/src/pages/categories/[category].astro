@@ -1,0 +1,89 @@
+---
+import Container from "@/components/Container.astro";
+import MainLayout from "@/components/MainLayout.astro";
+import PostCard from "@/components/PostCard.astro";
+import PostService from "@/services/PostService";
+
+export async function getStaticPaths() {
+  const categories = [
+    "finance",
+    "business",
+    "sports",
+    "entertainment",
+    "travel",
+  ];
+
+  const allPosts = await new PostService("http://localhost:3000").getPosts();
+
+  return categories.map((category) => {
+    return {
+      params: { category },
+      props: {
+        posts: allPosts.filter((post) => post.tag === category),
+      },
+    };
+  });
+}
+
+const { posts } = Astro.props as Awaited<
+  ReturnType<typeof getStaticPaths>
+>[number]["props"];
+
+const { category } = Astro.params as Awaited<
+  ReturnType<typeof getStaticPaths>
+>[number]["params"];
+
+const [firstLetterOfTheString, secondLetterOfTheString] = [0, 1];
+
+const capitalizedCategory = `${category
+  .substring(firstLetterOfTheString, secondLetterOfTheString)
+  .toUpperCase()}${category.substring(secondLetterOfTheString)}`;
+---
+
+<MainLayout title={capitalizedCategory}>
+  <Fragment slot="header">
+    <Container widthClass={"w-2/5"}>
+      <div class="grid place-items-center gap-6">
+        <h1>{capitalizedCategory}</h1>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+          varius enim in eros elementum tristique. Duis cursus, mi quis viverra
+          ornare, eros dolor interdum nulla.
+        </p>
+      </div>
+    </Container>
+  </Fragment>
+
+  <Fragment slot="main">
+    <div class="px-4 py-12">
+      <Container>
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {
+            (function* () {
+              if (posts.length === 0) {
+                return (
+                  <div class="text-2xl text-red-500">
+                    There are no posts for this category
+                  </div>
+                );
+              }
+              for (const post of posts) {
+                yield (
+                  <PostCard
+                    class={"h-full"}
+                    title={post.title}
+                    image={post.image}
+                    author={post.author}
+                    pubDate={post.pubDate}
+                    thumbnail={post.thumbnail}
+                    tag={post.tag}
+                  />
+                );
+              }
+            })()
+          }
+        </div>
+      </Container>
+    </div>
+  </Fragment>
+</MainLayout>
