@@ -24,41 +24,6 @@ const socialMediaLinks = ["twitter", "instagram", "facebook"];
 const { title } = Astro.props;
 ---
 
-<script is:inline>
-  const classUsedToHideElement = "opacity-0";
-  const nameOfDataLayerUsedForTransition = "transition-wrapper";
-
-  const sectionsObserver = new IntersectionObserver(
-    (entries, observer) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target
-            .querySelector(`[data-layer=${nameOfDataLayerUsedForTransition}]`)
-            .classList.remove(classUsedToHideElement);
-
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    {
-      threshold: 0.2,
-    }
-  );
-
-  document.addEventListener("DOMContentLoaded", () => {
-    const sections = document.querySelectorAll("section[aria-labelledby]");
-
-    Array.from(sections)
-      .map((section) => {
-        section
-          .querySelector(`[data-layer=${nameOfDataLayerUsedForTransition}]`)
-          ?.classList.add(classUsedToHideElement);
-        return section;
-      })
-      .forEach((section) => sectionsObserver.observe(section));
-  });
-</script>
-
 <HMFLayout title={title}>
   <Fragment slot="header">
     <slot name="header" />
@@ -131,3 +96,37 @@ const { title } = Astro.props;
     </Container>
   </div>
 </HMFLayout>
+
+<script>
+  const classUsedToHideElement = "opacity-0";
+  const nameOfDataLayerUsedForTransition = "transition-wrapper";
+
+  const media = matchMedia("(max-width: 1024px)");
+
+  const ifViewportWidhIsLessThan1024PxSetTheNumberTo400PxElseEmptyString =
+    media.matches ? "400px" : "";
+  const twentyPercentOfTheElement = 0.2;
+
+  const sectionsObserver = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target
+            .querySelector(`[data-layer=${nameOfDataLayerUsedForTransition}]`)
+            ?.classList.remove(classUsedToHideElement);
+
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+
+    {
+      rootMargin:
+        ifViewportWidhIsLessThan1024PxSetTheNumberTo400PxElseEmptyString,
+      threshold: twentyPercentOfTheElement,
+    }
+  );
+
+  const sections = document.querySelectorAll("section[aria-labelledby]");
+  sections.forEach((section) => sectionsObserver.observe(section));
+</script>

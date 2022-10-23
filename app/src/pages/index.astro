@@ -50,16 +50,18 @@ const tenRandomPosts = latestPosts
     </div>
 
     <div class="lg:hidden">
-      <SubscriptionForm
-        title="A blog that people will actually want to read"
-        content="People use Bulletin to share big ideas with the world on a regular basis with a focus on accessibility and usability."
-        buttonText="Try It"
-      />
+      <div class="bg-violet-600">
+        <SubscriptionForm
+          title="A blog that people will actually want to read"
+          content="People use Bulletin to share big ideas with the world on a regular basis with a focus on accessibility and usability."
+          buttonText="Try It"
+        />
+      </div>
     </div>
   </Fragment>
 
   <Fragment slot="main">
-    <section class="grid gap-2 px-4 py-10" aria-labelledby="featured-posts">
+    <section class="grid gap-2 px-5 py-16" aria-labelledby="featured-posts">
       <TransitionWrapper>
         <Container>
           <TwoColFeaturedPostsGrid posts={latestPosts} />

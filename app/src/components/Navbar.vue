@@ -85,6 +85,7 @@ function resetAllActiveStatesToFalse() {
                   "
                 />
                 <Button
+                  href="/about"
                   class="text-md text-gray-50 rounded-md bg-violet-700"
                   size="sm"
                 >
@@ -395,7 +396,10 @@ namespace Components {
           </div>
 
           <div class="transtion-opacity duration-200 ease-in hover:opacity-80">
-            <Button class="bg-violet-600 w-full text-gray-50 rounded-lg">
+            <Button
+              href={"/about"}
+              class="bg-violet-600 w-full text-gray-50 rounded-lg"
+            >
               Subscribe
             </Button>
           </div>

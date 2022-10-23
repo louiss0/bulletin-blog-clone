@@ -63,7 +63,7 @@ const { author, authorImage, pubDate, tag, thumbnail, content, title } = post;
         <img src={thumbnail} alt="" class="h-[25rem] w-full" />
       </figure>
 
-      <article>
+      <article class="py-20">
         <Fragment set:html={content} />
       </article>
     </Container>
@@ -71,9 +71,6 @@ const { author, authorImage, pubDate, tag, thumbnail, content, title } = post;
 </MainLayout>
 
 <style lang="postcss">
-  article {
-    @apply py-20;
-  }
   article > :global(blockquote) {
     @apply px-8 py-4 leading-relaxed;
     @apply border-l-2 border-gray-800 border-solid;
