@@ -31,14 +31,21 @@ export default class PostService {
 
     async getPosts() {
 
-        const { posts } = (await fetch(`${import.meta.url}/src/mock-data/posts.json`)
-            .then((response) => response.json())
-            .catch(console.error)    
-        ) as {
-            posts: Array<Post>;
-    };
+        try {
+            
+            const res = await fetch(`${import.meta.env.VITE_SITE_HOST}/src/mock-data/posts.json`)
+                
+            const json = await res.json()
 
-        return posts
+            return json.posts
+            
+        
+    
+        } catch (error) {
+            console.error(error)
+
+            return[]
+        }
 
     }
 
