@@ -8,7 +8,9 @@ import TwoColFeaturedPostsGrid from "@/components/TwoColFeaturedPostsGrid.astro"
 import device from "@/images/6123fc6440d297ef079b81ce_device_000001.jpg";
 import PostService from "@/services/PostService";
 
-const latestPosts = await new PostService(Astro.url.href).getLatestPosts();
+const latestPosts = await new PostService(
+  import.meta.env.VITE_SITE_HOST
+).getLatestPosts();
 
 const latestFourPosts = latestPosts.slice(0, 4);
 

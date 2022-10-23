@@ -5,7 +5,9 @@ import PostCard from "@/components/PostCard.astro";
 import SubscriptionForm from "@/components/SubscriptionForm.astro";
 import TransitionWrapper from "@/components/TransitionWrapper.astro";
 import PostService from "@/services/PostService";
-const posts = await new PostService(Astro.url.href).getLatestPosts();
+const posts = await new PostService(
+  import.meta.env.VITE_SITE_HOST
+).getLatestPosts();
 import flowerImage from "@/images/612bc9fdfe52e1fbcc5602c0_photo-1533090161767-e6ffed986c88.jpeg";
 import DeskGuyWithTestimonialOnTheRight from "@/components/DeskGuyWithTestimonialOnTheRight.astro";
 import RandomSellingPoints from "@/components/RandomSellingPoints.astro";
