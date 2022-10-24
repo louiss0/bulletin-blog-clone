@@ -7,7 +7,7 @@ import RandomSellingPoints from "@/components/RandomSellingPoints.astro";
 import TransitionWrapper from "@/components/TransitionWrapper.astro";
 import TwoColFeaturedPostsGrid from "@/components/TwoColFeaturedPostsGrid.astro";
 import PostService from "@/services/PostService";
-const posts = await new PostService().getLatestPosts();
+const posts = new PostService().getLatestPosts();
 import computerImage from "/src/images/612bd9d837852f6e209dc4a1_luca-bravo-XJXWbfSo2f0-unsplash (1).jpg";
 ---
 

@@ -20,6 +20,8 @@ const {
   class: $class = "",
 } = Astro.props;
 const alteredDate = new Date(pubDate).toLocaleString();
+
+const url = import.meta.env.DEV ? Astro.url : Astro.site;
 ---
 
 <a
@@ -50,7 +52,7 @@ const alteredDate = new Date(pubDate).toLocaleString();
   </footer>
 </a>
 
-<script define:vars={{ thumbnail, url: Astro.url, numberId }}>
+<script define:vars={{ thumbnail, url, numberId }}>
   const thumbnailWrapper = new Image();
 
   thumbnailWrapper.src = new URL(thumbnail, url).href;
