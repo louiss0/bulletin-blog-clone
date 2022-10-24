@@ -38,7 +38,7 @@ const tenRandomPosts = latestPosts
       <Container widthClass={"w-8/12"} maxWidthClass={"max-w-screen-2xl"}>
         <div class="lg:grid lg:grid-cols-2">
           <SubscriptionForm
-            title="A blog that people will actually want to read"
+            title="A blog that pe ople will actually want to read"
             content="People use Bulletin to share big ideas with the world on a regular basis with a focus on accessibility and usability."
             buttonText="Try It"
           />
@@ -64,7 +64,7 @@ const tenRandomPosts = latestPosts
     <section class="grid gap-2 px-4 py-10" aria-labelledby="featured-posts">
       <TransitionWrapper>
         <Container>
-          <TwoColFeaturedPostsGrid posts={latestPosts ? latestPosts : []} />
+          <TwoColFeaturedPostsGrid posts={latestPosts} />
         </Container>
       </TransitionWrapper>
     </section>
@@ -77,7 +77,7 @@ const tenRandomPosts = latestPosts
             <ul class="grid gap-4 lg:flex">
               {
                 (function* () {
-                  if (latestFourPosts?.length === 0 || !latestFourPosts) return;
+                  if (latestFourPosts.length === 0) return;
                   for (const latestPost of latestFourPosts) {
                     yield (
                       <li class="flex-1">
@@ -113,7 +113,7 @@ const tenRandomPosts = latestPosts
             <ul class="grid gap-4 lg:grid-cols-2 lg:grid-rows-5">
               {
                 (function* () {
-                  if (tenRandomPosts?.length === 0 || !tenRandomPosts) return;
+                  if (tenRandomPosts?.length === 0) return;
                   for (const randomPost of tenRandomPosts) {
                     yield (
                       <li>

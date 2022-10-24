@@ -1,4 +1,7 @@
+
+import postsJson from "@/mock-data/posts.json"
 import Post from "@/types/Post";
+
 
 
 export default class PostService {
@@ -8,8 +11,7 @@ export default class PostService {
     // #url:string
 
  
-     private static subtractPrevPostDateTimestampFromNextPostDateTimestamp(prevPost: Post,
-        nextPost: Post) {
+     private static subtractPrevPostDateTimestampFromNextPostDateTimestamp<T extends {pubDate:string}>(prevPost: T,nextPost: T) {
         
   
         return new Date(nextPost.pubDate).getTime() - new Date(prevPost.pubDate).getTime();
@@ -18,35 +20,39 @@ export default class PostService {
     
         constructor( ) {
             
-        // this.#url=  new URL(, secondHalfOfUrl).href
 
     }
     
  
-    async getLatestPosts() {
+    getLatestPosts() {
 
-        return (await this.getPosts()).sort(PostService.subtractPrevPostDateTimestampFromNextPostDateTimestamp)
+        return this.getPosts().sort(PostService.subtractPrevPostDateTimestampFromNextPostDateTimestamp)
 
     }
 
-    async getPosts() {
+    getPosts() {
 
-        try {
             
-            const res = await fetch(`${import.meta.env.VITE_SITE_HOST}/src/mock-data/posts.json`)
-                
-            const json = await res.json()
-
-            return json.posts
+           
+        return postsJson.posts.map( post => {
+    
+            
+            return new Post(
+                post.title,
+                post.content,
+                post.thumbnail,
+                post.image,
+                post.author,
+                post.authorImage,
+                post.pubDate,
+                post.tag,
+            )
+    
+        })
             
         
     
-        } catch (error) {
-            console.error(error)
-
-            return[]
-        }
-
+ 
     }
 
 } 

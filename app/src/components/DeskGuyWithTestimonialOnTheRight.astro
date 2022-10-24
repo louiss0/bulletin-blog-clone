@@ -1,13 +1,12 @@
 ---
 import Container from "./Container.astro";
+import jimHalpert from "/src/images/612bcba8d9c353c79b4d07fa_avatar-2.jpg";
+import deskGuy from "/src/images/61228f5f1250b19f9d938f95_60196731f1a680591e19f7a1_you-x-ventures-zSpGWzwRFas-unsplash-p-1080-p-800.jpeg";
 ---
 
 <Container>
   <div class="grid gap-16 lg:grid-cols-2 lg:h-96">
-    <img
-      src="/src/images/61228f5f1250b19f9d938f95_60196731f1a680591e19f7a1_you-x-ventures-zSpGWzwRFas-unsplash-p-1080-p-800.jpeg"
-      alt=""
-    />
+    <img src={deskGuy} alt="" />
     <div class="grid gap-4 content-center">
       <p>
         Lorem, ipsum dolor sit amet consectetur adipisicing elit. Itaque iure
@@ -16,11 +15,7 @@ import Container from "./Container.astro";
       </p>
       <div class="flex gap-2 items-center">
         <div class="w-6">
-          <img
-            src={"/src/images/612bcba8d9c353c79b4d07fa_avatar-2.jpg"}
-            alt={"Jim Halpert"}
-            class="rounded-full"
-          />
+          <img src={jimHalpert} alt={"Jim Halpert"} class="rounded-full" />
         </div>
         <div class="uppercase text-base text-gray-300">Jim Halpert</div>
       </div>

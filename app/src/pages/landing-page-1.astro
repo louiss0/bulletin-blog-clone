@@ -5,26 +5,31 @@ import PostCard from "@/components/PostCard.astro";
 import SubscriptionForm from "@/components/SubscriptionForm.astro";
 import TransitionWrapper from "@/components/TransitionWrapper.astro";
 import PostService from "@/services/PostService";
-const posts = await new PostService().getLatestPosts();
+const posts = new PostService().getLatestPosts();
 import flowerImage from "@/images/612bc9fdfe52e1fbcc5602c0_photo-1533090161767-e6ffed986c88.jpeg";
 import DeskGuyWithTestimonialOnTheRight from "@/components/DeskGuyWithTestimonialOnTheRight.astro";
 import RandomSellingPoints from "@/components/RandomSellingPoints.astro";
 const latestThreePosts = posts.slice(0, 3);
+
+import avatarOne from "@/images/612bcb9ec64ea4d1a38171af_avatar-1.jpg"
+import avatarTwo from "@/images/612bcba8d9c353c79b4d07fa_avatar-2.jpg"
+import avatarThree from "@/images/612bcbb0df969cde48cec580_avatar-3.jpg"
+import avatarFour from "@/images/612bcbb66f6663145f39146e_avatar-4.jpg"
 const customers = [
   {
-    avatar: "/src/images/612bcb9ec64ea4d1a38171af_avatar-1.jpg",
+    avatar: avatarOne,
     name: "Pam Beasley",
   },
   {
-    avatar: "/src/images/612bcba8d9c353c79b4d07fa_avatar-2.jpg",
+    avatar: avatarTwo,
     name: "JIM HALPERT",
   },
   {
-    avatar: "/src/images/612bcbb0df969cde48cec580_avatar-3.jpg",
+    avatar: avatarThree,
     name: "Kevin Malone",
   },
   {
-    avatar: "/src/images/612bcbb66f6663145f39146e_avatar-4.jpg",
+    avatar: avatarFour,
     name: "Erin Hannon",
   },
 ];
@@ -160,7 +165,7 @@ const customers = [
                   <div class="justify-self-start">
                     <div class="flex gap-2 items-center">
                       <div class="w-12">
-                        <img src={avatar} alt={name} class="rounded-full" />
+                        <img src={} alt={name} class="rounded-full" />
                       </div>
                       <div class="uppercase text-sm text-gray-300">{name}</div>
                     </div>

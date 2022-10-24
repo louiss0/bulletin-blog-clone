@@ -13,7 +13,7 @@ export async function getStaticPaths() {
     "travel",
   ];
 
-  const allPosts = await new PostService().getPosts();
+  const allPosts = new PostService().getPosts();
 
   return categories.map((category) => {
     return {
